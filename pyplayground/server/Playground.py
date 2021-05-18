@@ -15,13 +15,16 @@ sys.path.insert( 0, pkgpath )
 
 # Windows
 if( os.name == 'nt' ):
+    cwd = os.getcwd()
+    os.add_dll_directory( f'{pkgpath}\\server\\windows\\dll' )
     os.environ['QT_PLUGIN_PATH'] =  f'{pkgpath}\\server\\windows\\qt'
     os.environ['QT_OPENGL'] = 'desktop'
     sys.path.append( f'{pkgpath}/server/windows' )
 # Linux
 else:
-    import server.linux.pyenki as pyenki
+    sys.path.append( f'{pkgpath}/server/linux' )
 
+import pyenki
 import server.RobotFactory as RobotFactory
 import utils.BasicSockJson as BasicSockJson
 
@@ -124,7 +127,7 @@ class Playground():
         sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
         sock.bind( ( self.host, self.port ) )
         sock.listen( len( self.robots ) )
-        sock.setblocking( 0 )
+        #sock.setblocking( 0 )
         buff = bytearray( LLEN )
         print( f'Playground >> Esperando en tcp://{self.host}:{self.port}' )
 

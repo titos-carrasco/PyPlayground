@@ -1,4 +1,4 @@
-import server.linux.pyenki as pyenki
+import pyenki
 import server.RobotBase as RobotBase
 
 
