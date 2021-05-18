@@ -42,10 +42,6 @@ class RobotBase():
         self.rightSpeed = rightSpeed
         return { 'error': '', 'answer':{} }
 
-    #--- Recupera el valor de sus sensores
-    def getSensors( self ):
-        return { 'error': 'Bad Command', 'answer':{} }
-
     #--- Privadas
 
     #--- El interprete de comandos
@@ -85,17 +81,18 @@ class RobotBase():
         if( self.hasMessage ):
             self.hasMessage = False
 
-            if( not 'cmd' in self.message ):
-                self.message = { 'error': 'No Command', 'answer':{} }
-            elif( self.message['cmd'] == 'getSensors' ):
-                self.message = self.getSensors()
-            elif( self.message['cmd'] == 'setSpeed' ):
-                try:
+            try:
+                if( self.message['cmd'] == 'getSensors' ):
+                    self.message = self.getSensors()
+                elif( self.message['cmd'] == 'setSpeed' ):
                     self.message = self.setSpeed( float( self.message['leftSpeed'] ), float( self.message['rightSpeed'] ) )
-                except:
-                    self.message = { 'error': 'Bad Parameters', 'answer':{} }
-
-            else:
+                elif( self.message['cmd'] == 'setLedRing' ):
+                    self.message = self.setLedRing( self.message['estado'] )
+                elif( self.message['cmd'] == 'setLedsIntensity' ):
+                    self.message = self.setLedsIntensity( self.message['leds'] )
+                else:
+                    raise KeyError
+            except:
                 self.message = { 'error': 'Bad Command', 'answer':{} }
 
             self.hasAnswer = True

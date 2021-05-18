@@ -38,3 +38,7 @@ class MyEPuck( RobotBase.RobotBase,pyenki.EPuck ):
             #"viscousMomentFrictionCoefficient":self.viscousMomentFrictionCoefficient
         }
         return { 'error': '', 'answer':{ 'sensors':sensors } }
+
+    def setLedRing( self, on_off ):
+        super().setLedRing( on_off )
+        return { 'error': '', 'answer':{} }

@@ -82,6 +82,13 @@ class RobotEPuck( RobotControl ):
     def __str__( self ):
         return f'RobotEnki >> name:{self.name} - host={self.host} - port={self.port}'
 
+    def setLedRing( self, on_off ):
+        led_on = 1 if on_off else 0
+        pkg = { 'cmd':'setLedRing', 'estado': on_off }
+        BasicSockJson.send( self.sock, pkg )
+        resp = BasicSockJson.read( self.sock, self.buff )['answer']
+        return resp
+
 
 #-- private inner class
 class RobotThymio2( RobotControl ):
@@ -91,3 +98,9 @@ class RobotThymio2( RobotControl ):
 
     def __str__( self ):
         return f'RobotThymio2 >> name:{self.name} - host={self.host} - port={self.port}'
+
+    def setLedsIntensity( self, leds ):
+        pkg = { 'cmd':'setLedsIntensity', 'leds': leds }
+        BasicSockJson.send( self.sock, pkg )
+        resp = BasicSockJson.read( self.sock, self.buff )['answer']
+        return resp

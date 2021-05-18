@@ -38,3 +38,8 @@ class MyThymio2( RobotBase.RobotBase, pyenki.Thymio2 ):
             #"viscousMomentFrictionCoefficient":self.viscousMomentFrictionCoefficient
         }
         return { 'error': '', 'answer':{ 'sensors':sensors } }
+
+    def setLedsIntensity( self, leds ):
+        for led in leds:
+            self.setLedIntensity( int(led), leds[led] )
+        return { 'error': '', 'answer':{} }
