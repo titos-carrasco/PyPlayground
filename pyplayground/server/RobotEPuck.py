@@ -42,3 +42,7 @@ class MyEPuck( RobotBase.RobotBase,pyenki.EPuck ):
     def setLedRing( self, on_off ):
         super().setLedRing( on_off )
         return { 'error': '', 'answer':{} }
+
+    def getCameraImage( self ):
+        image = bytearray( [ int(v*255) for c in self.cameraImage for v in c.components] ).decode( 'iso-8859-1' )
+        return { 'error': '', 'answer':{ 'image':image } }

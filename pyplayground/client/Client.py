@@ -7,7 +7,7 @@ import pyplayground.utils.BasicSockJson as BasicSockJson
 
 #--- Public Class
 class RobotControl():
-    LLEN = 1024
+    LLEN = 512*3
 
     # constructor
     def __init__( self, name, host, port, sock ):
@@ -42,6 +42,15 @@ class RobotControl():
         BasicSockJson.send( self.sock, pkg )
         resp = BasicSockJson.read( self.sock, self.buff )['answer']['sensors']
         return resp
+
+    def setLedRing( self, on_off ):
+        return {}
+
+    def setLedsIntensity( self, leds ):
+        return {}
+
+    def getCameraImage( self ):
+        return {}
 
     def __str__( self ):
         return f'RobotControl >> name:{self.name} - host={self.host} - port={self.port}'
@@ -87,6 +96,15 @@ class RobotEPuck( RobotControl ):
         pkg = { 'cmd':'setLedRing', 'estado': on_off }
         BasicSockJson.send( self.sock, pkg )
         resp = BasicSockJson.read( self.sock, self.buff )['answer']
+        return resp
+
+    def getCameraImage( self ):
+        pkg = { 'cmd':'getCameraImage' }
+        BasicSockJson.send( self.sock, pkg )
+        resp = BasicSockJson.read( self.sock, self.buff )['answer']['image']
+        resp = bytearray( resp, 'iso-8859-1' )
+        l = len( resp )
+        resp = [ tuple( resp[i:i+4] ) for i in range( 0, l, 4 ) ]
         return resp
 
 

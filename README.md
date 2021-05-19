@@ -6,6 +6,7 @@ Playground in Python3x using [ENKI Robot Simulator](https://github.com/enki-comm
 
 ![](images/img-04.png "") ![](images/img-05.png "") ![](images/img-06.png "")
 
+![](images/img-07.png "") 
 
 Tested on
 + Linux
@@ -13,14 +14,20 @@ Tested on
 + Windows
 	+ Windows 10, Python 3.9.0, Qt5.12.10, Boost 1.76.0
 
+v1.1.0
++ Added support for EPuck linear camera image
++ Fix conversion for color from worlds files to pyenki Color
++ Fix worlds files for correct transparency value
++ Increment buffer for data exchange in socket coomunication
++ Add Test for Epuck Camera Image
+
 v1.0.0
 + Move world.README to top directory for easy reference
 + Fix transparency in *.worlds files
 + Add support for setLed in both robots
-+ Add test for leds
-+ Fit .gitignore 
-+ Push pyenki.so
 + Add Test for LEds
++ Fix .gitignore 
++ Push pyenki.so
 + First functional Release
 
 v0.2.1

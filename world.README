@@ -4,10 +4,10 @@ El orden de aparición de los elementos y su descripción se muestran a continua
 
 color
 -----
-    { "type":"color", "name":"gray" , "r":229, "g":229, "b":229, "a":0 }
+    { "type":"color", "name":"gray" , "r":229, "g":229, "b":229, "a":255 }
         name   : nombre a asignar a este color para su uso en el resto del archivo
         r, g, b: valor númerico (0-255) para los colores RGB
-        a      : valor de transparencia (0 es completamente transparente, 1 no transparente)
+        a      : valor de transparencia (0 es completamente transparente, 255 no transparente)
 
 
 world

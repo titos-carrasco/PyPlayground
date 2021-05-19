@@ -6,7 +6,7 @@ import utils.BasicSockJson as BasicSockJson
 
 
 class RobotBase():
-    LLEN = 1024
+    LLEN = 512*3
 
     def __init__( self, name ):
         super().__init__()
@@ -90,9 +90,12 @@ class RobotBase():
                     self.message = self.setLedRing( self.message['estado'] )
                 elif( self.message['cmd'] == 'setLedsIntensity' ):
                     self.message = self.setLedsIntensity( self.message['leds'] )
+                elif( self.message['cmd'] == 'getCameraImage' ):
+                    self.message = self.getCameraImage()
                 else:
                     raise KeyError
-            except:
+            except Exception as e:
+                print( e )
                 self.message = { 'error': 'Bad Command', 'answer':{} }
 
             self.hasAnswer = True

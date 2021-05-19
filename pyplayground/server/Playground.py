@@ -82,7 +82,7 @@ class Playground():
 
             #--- Un color
             if( tipo == 'color' ):
-                colors[ elem['name'] ] = pyenki.Color( elem['r'], elem['g'], elem['b'], elem['a'] )
+                colors[ elem['name'] ] = pyenki.Color( elem['r']/255., elem['g']/255., elem['b']/255., elem['a']/255. )
 
             #--- El mundo
             elif( tipo == 'world' ):
@@ -123,7 +123,7 @@ class Playground():
 
     #-- El despachador de conexiones entrantes
     def _TDispatcher( self ):
-        LLEN = 1024
+        LLEN = 512*3
         sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
         sock.bind( ( self.host, self.port ) )
         sock.listen( len( self.robots ) )
