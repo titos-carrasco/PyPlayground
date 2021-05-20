@@ -2,12 +2,11 @@ import time
 import random
 import subprocess
 
-from pyplayground.client import Client
+from pyplayground.client import RobotFactory
 
-
-#---
+# THE main
 def main():
-    # Server
+    # Levantamos el playground en otro proceso
     try:
         pg = subprocess.Popen( [ 'python', 'pyplayground/server/Playground.py', 'worlds/sumo.world' ], shell=False )
         time.sleep( 1 )
@@ -15,13 +14,18 @@ def main():
         print( e )
         exit()
 
-    # Client
+    # Los datos de conexion al playground
     host = '127.0.0.1'
     port = 44444
+
+    # Usamos try/except para conocer los errores que se produzcan
     speed = 100
     try:
-        rob = Client.RobotControl.connect( 'Thymio-01', host, port )
+        # Accesamos el robot y configuramos algunos de sus atributos
+        rob = RobotFactory.connectRobot( 'Thymio-01', host, port )
         rob.setSpeed( speed, speed )
+
+        # Loop clasico
         while( True ):
             sensores = rob.getSensors()
 
@@ -57,9 +61,8 @@ def main():
     except Exception as e:
         print( e )
 
-    # Server shutdown
+    # Detenemos el playground
     pg.send_signal( subprocess.signal.SIGTERM )
-
 
 # show time
 main()
