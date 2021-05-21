@@ -1,21 +1,15 @@
-"""
-Funciones de apoyo para leer/recibir data en formato JSON
-utilizando un socket
-"""
-
 import socket
 import json
 
 
 def send( sock:socket.socket, dicc:dict ) -> None :
-    """Envia por el socket, en formato JSON finalizado en '\\n', un diccionario
+    """
+    Convierte el diccionario recibido a un string en formato
+    JSON, agregando un '\\n' al final, y lo envia por el socket
 
     Parameters
       sock: El socket a utilizar
-      dicc: EL diccionario a enviar
-
-    Return
-        None
+      dicc: El diccionario a enviar
     """
     msg = json.dumps( dicc ) + '\n'
     try:
@@ -24,7 +18,9 @@ def send( sock:socket.socket, dicc:dict ) -> None :
         raise
 
 def read( sock:socket.socket, buff:bytearray ) -> dict :
-    """Lee del socket un string en formato JSON finalizado en '\\n'
+    """
+    Lee del socket un string en formato JSON, finalizado en '\\n',
+    y lo convierte a un diccionario
 
     Parameters
       sock:  El socket a utilizar.
@@ -32,7 +28,7 @@ def read( sock:socket.socket, buff:bytearray ) -> dict :
              Se leeran hasta "len(bytearray)" bytes
 
     Return
-      El diccionario recibido
+      El diccionario
     """
 
     lbuff = len( buff )

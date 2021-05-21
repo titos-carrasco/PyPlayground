@@ -4,7 +4,6 @@ import time
 
 import utils.BasicSockJson as BasicSockJson
 
-
 class RobotBase():
     LLEN = 512*3
 

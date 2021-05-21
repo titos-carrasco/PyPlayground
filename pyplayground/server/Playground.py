@@ -28,7 +28,6 @@ import pyenki
 import server.RobotFactory as RobotFactory
 import utils.BasicSockJson as BasicSockJson
 
-
 class Playground():
     #--- Constructor
     def __init__( self, world_def  ):

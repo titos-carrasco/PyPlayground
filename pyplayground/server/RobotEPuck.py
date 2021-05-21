@@ -1,7 +1,6 @@
 import pyenki
 import server.RobotBase as RobotBase
 
-
 class MyEPuck( RobotBase.RobotBase,pyenki.EPuck ):
     tipo = 'epuck'
 

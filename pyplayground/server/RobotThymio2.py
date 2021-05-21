@@ -1,7 +1,6 @@
 import pyenki
 import server.RobotBase as RobotBase
 
-
 class MyThymio2( RobotBase.RobotBase, pyenki.Thymio2 ):
     tipo = 'thymio2'
 

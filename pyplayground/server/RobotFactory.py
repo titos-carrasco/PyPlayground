@@ -1,7 +1,6 @@
 import server.RobotThymio2 as RobotThymio2
 import server.RobotEPuck as RobotEPuck
 
-
 # Factory
 def makeRobot( tipo, name ):
     if( tipo == 'thymio2' ):
