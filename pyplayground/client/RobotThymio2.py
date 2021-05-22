@@ -10,10 +10,11 @@ class RobotThymio2( RobotBase.RobotBase ):
         name: nombre del robot a controlar en el playground
         host: servidor en donde se encuenra este robot
         port: puerta en donde se encuentra este robot
-        sock: socket para comunicarse con el robot remoto
     """
-    def __init__( self, name:str, host:str, port:int, sock:socket.socket ):
-        super().__init__( name, host, port, sock )
+    tipo = 'thymio2'
+
+    def __init__( self, name:str, host:str, port:int  ):
+        super().__init__( name, host, port )
 
     def setLedsIntensity( self, leds:list ):
         """

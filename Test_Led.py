@@ -2,7 +2,8 @@ import time
 import random
 import subprocess
 
-from pyplayground.client.RobotFactory import RobotFactory
+from pyplayground.client.RobotThymio2 import RobotThymio2
+from pyplayground.client.RobotEPuck import RobotEPuck
 
 # THE main
 def main():
@@ -21,11 +22,11 @@ def main():
     # Usamos try/except para conocer los errores que se produzcan
     try:
         # Accesamos los robots y configuramos algunos de sus atributos
-        thymio = RobotFactory.connect( 'Thymio-01', host, port )
+        thymio = RobotThymio2( 'Thymio-01', host, port )
         leds = [0]*23
         ledval = 0
 
-        epuck  = RobotFactory.connect( 'Epuck-01' , host, port )
+        epuck  = RobotEPuck( 'Epuck-01' , host, port )
         epuck.setLedRing( True )
 
         # Loop clasico

@@ -2,7 +2,7 @@ import time
 import random
 import subprocess
 
-from pyplayground.client.RobotFactory import RobotFactory
+from pyplayground.client.RobotThymio2 import RobotThymio2
 
 # THE main
 def main():
@@ -24,7 +24,7 @@ def main():
         robots = []
         for p in range( 44444, 44480 ):  # 44480
             name = f'Thymio-{p}'
-            r = RobotFactory.connect( name, host, port )
+            r = RobotThymio2( name, host, port )
             robots.append( r)
 
         # Loop clasico

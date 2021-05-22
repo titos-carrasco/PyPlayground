@@ -25,7 +25,6 @@ def main():
     #help( pyplayground.server.RobotThymio2 )
     #help( pyplayground.server.RobotEPuck )
     help( pyplayground.client )
-    help( pyplayground.client.RobotFactory )
     help( pyplayground.client.RobotBase )
     help( pyplayground.client.RobotThymio2 )
     help( pyplayground.client.RobotEPuck )

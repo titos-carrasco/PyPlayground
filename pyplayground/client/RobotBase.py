@@ -9,15 +9,15 @@ class RobotBase():
         name: nombre del robot a controlar en el playground
         host: servidor en donde se encuenra este robot
         port: puerta en donde se encuentra este robot
-        sock: socket para comunicarse con el robot remoto
     """
 
-    def __init__( self, name:str, host:str, port:int, sock:socket.socket ):
+    def __init__( self, name:str, host:str, port:int ):
         self.name = name
         self.host = host
         self.port = port
-        self.sock = sock
+        self.sock = None
         self.buff = bytearray( 512*3 )
+        self.connect( name, host, port )
 
     def close( self ):
         """
@@ -62,6 +62,42 @@ class RobotBase():
         pkg = { 'cmd':'getSensors' }
         resp = self.sendPkg( pkg )
         return resp
+
+    def connect(self, name:str, host:str, port:int ):
+        """
+        Conecta a un robot de un playground remoto
+
+        El metodo es interno
+
+        Parameters
+          name: Nombre del robot a conectar
+          host: Servidor en donde se encuentra el playground
+          port: Puerta en donde escucha el playground
+        """
+        if( host == '' ): host = '0.0.0.0'
+        try:
+            # nos conectamos al servidor
+            self.sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
+            self.sock.connect( ( host, port ) )
+
+            # pedimos conexion al robot
+            self.sock.sendall( bytearray( name + '\n', 'iso-8859-1' ) )
+
+            # recibimos la respuesta del servidor
+            tipo = self.readline()
+
+            # validamos la respuesta
+            if( tipo != self.tipo ):
+                raise Exception( f"Robot '{name}' no aceptado" )
+        except Exception as e:
+            try:
+                self.sock.shutdown( socket.SHUT_RDWR )
+                self.sock.close()
+            except Exception:
+                pass
+            self.sock = None
+            raise
+
 
     def sendPkg( self, pkg:dict ) -> object:
         self.sock.sendall( bytearray( json.dumps( pkg ) + '\n', 'iso-8859-1' ) )

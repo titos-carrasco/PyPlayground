@@ -2,7 +2,7 @@ import time
 import random
 import subprocess
 
-from pyplayground.client.RobotFactory import RobotFactory
+from pyplayground.client.RobotEPuck import RobotEPuck
 import pygame
 
 # THE main
@@ -22,7 +22,7 @@ def main():
     # Usamos try/except para conocer los errores que se produzcan
     try:
         # Accesamos el robot y configuramos algunos de sus atributos
-        epuck  = RobotFactory.connect( 'Epuck-01' , host, port )
+        epuck  = RobotEPuck( 'Epuck-01' , host, port )
         epuck.setLedRing( True )
         epuck.setSpeed( -5, 5 )
 

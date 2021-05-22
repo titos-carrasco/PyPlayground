@@ -2,7 +2,7 @@ import time
 import random
 import subprocess
 
-from pyplayground.client.RobotFactory import RobotFactory
+from pyplayground.client.RobotThymio2 import RobotThymio2
 
 # THE main
 def main():
@@ -22,7 +22,7 @@ def main():
     speed = 100
     try:
         # Accesamos el robot y configuramos algunos de sus atributos
-        rob = RobotFactory.connect( 'Thymio-01', host, port )
+        rob = RobotThymio2( 'Thymio-01', host, port )
         rob.setSpeed( speed, speed )
 
         # Loop clasico

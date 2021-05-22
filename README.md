@@ -20,6 +20,9 @@ v1.5.0
 + Agrega Test_Help.py para desplegar la documentación
 + Elimina paquete Utils
 
+V1.1.1
++ Simplifica modulo cliente
+
 v1.1.0
 + Added support for EPuck linear camera image
 + Fix conversion for color from worlds files to pyenki Color
