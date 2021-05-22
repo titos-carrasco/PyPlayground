@@ -1,60 +1,70 @@
-"""
-Fabrica de conexiones a los robots
----
-
-    from pyplayground.client import RobotFactory
-
-    rob = RobotFactory.connectRobot( 'Thymio-01', '127.0.0.1', 44444 )
-"""
 import socket
 
-import pyplayground.utils.BasicSockJson as BasicSockJson
-import pyplayground.client.RobotThymio2 as RobotThymio2
-import pyplayground.client.RobotEPuck as RobotEPuck
+from pyplayground.client.RobotThymio2 import RobotThymio2
+from pyplayground.client.RobotEPuck import RobotEPuck
 
-def connectRobot( name:str, host:str, port:int ) -> object:
+class RobotFactory():
     """
-    Conecta localmente con un robot remoto
-
-    Parameters
-      name: Nombre del robot a conectar
-      host: Servidor en donde se encuentra el robot
-      port: Puerta en donde escucha el robot
-
-    Return
-        Objeto del tipo 'RobotThymio2' o 'RobotEPuck' segun
-        sea el tipo de robot conectado
-
-    Forma de uso
-        from pyplayground.client import RobotFactory
-
-        rob = RobotFactory.connectRobot( 'Thymio-01', '127.0.0.1', 44444 )
+    Fabrica de robots. Todos sus metodos son estaticos
     """
-    LLEN = 512*3
-    if( host == '' ): host = '0.0.0.0'
-    try:
-        # Nos conectamos al servidor
-        sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
-        sock.connect( ( host, port ) )
 
-        # Le pedimos una conexion al robot
-        pkg = { 'cmd':'connect', 'name': name }
-        BasicSockJson.send( sock, pkg )
+    def connect( name:str, host:str, port:int ) -> object:
+        """
+        Conecta a un robot de un playground remoto
 
-        # Recibimos la respuesta del servidor
-        buff = bytearray( LLEN )
-        resp = BasicSockJson.read( sock, buff )['answer']
-        buff = None
+        Parameters
+          name: Nombre del robot a conectar
+          host: Servidor en donde se encuentra el playground
+          port: Puerta en donde escucha el playground
 
-        # Retornamos el robot segun su tipo
-        if( resp['type'] == 'thymio2' ):
-            return RobotThymio2.RobotThymio2( name, host, port, sock )
-        elif( resp['type'] == 'epuck' ):
-            return RobotEPuck.RobotEPuck( name, host, port, sock )
-        else:
-            raise KeyError
-    except Exception as e:
-        print( e )
-        sock.shutdown( socket.SHUT_RDWR )
-        sock.close()
-        raise
+        Return
+            Objeto del tipo de robot a controlar
+        """
+        if( host == '' ): host = '0.0.0.0'
+        try:
+            # nos conectamos al servidor
+            sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
+            sock.connect( ( host, port ) )
+
+            # pedimos conexion al robot
+            sock.sendall( bytearray( name + '\n', 'iso-8859-1' ) )
+
+            # recibimos la respuesta del servidor
+            tipo = RobotFactory.readline( sock )
+
+            # generamos el robot segun su tipo
+            if( tipo == 'thymio2' ):
+                return RobotThymio2( name, host, port, sock )
+            elif( tipo == 'epuck' ):
+                return RobotEPuck( name, host, port, sock )
+            elif( tipo == '' ):
+                raise Exception( f"Robot '{name}' conectado a otro cliente" )
+            else:
+                raise Exception( 'Tipo de Robot no implementado' )
+        except Exception as e:
+            sock.shutdown( socket.SHUT_RDWR )
+            sock.close()
+            raise
+
+    def readline( conn:socket.socket ) -> str:
+        """
+        Lee una linea desde el socket
+
+        Este metodo es interno a la clase
+
+        Parameters
+            conn: el socket desde el cual leer
+
+        Return
+            La linea leida
+        """
+        ll = 64
+        buff = bytearray( ll )
+        n = 0
+        while( n < ll ):
+            c = conn.recv(1)
+            if( c == b'' ): return ''       # la conexion fue cerrada remotamente
+            if( c == b'\n' ): break         # fin de linea
+            buff[n] = ord( c )
+            n += 1
+        return buff[:n].decode( 'iso-8859-1' )

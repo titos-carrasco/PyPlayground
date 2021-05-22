@@ -1,82 +1,114 @@
 import threading
 import socket
+import select
+import json
 import time
 
-import utils.BasicSockJson as BasicSockJson
-
 class RobotBase():
-    LLEN = 512*3
+    """
+    Clase base para todos los robots
 
-    def __init__( self, name ):
+    Parameters
+        name: nombre para el robot
+    """
+
+    def __init__( self, name:str ):
         super().__init__()
         self.name = name
-        self._tRobot = None
-        self._tRunning = False
-        self.sock = None
+        self.lock = threading.Lock()
         self.message = None
         self.hasMessage = False
         self.hasAnswer = False
-        self.buff = bytearray( RobotBase.LLEN )
+        self.running = False
 
-    #--- Levanta el thread de un robot para atender la conexión
-    def start( self, sock ):
-        if( self._tRunning ): return False
-        self.sock = sock
-        self._tRobot = threading.Thread( target=self._TRobot, args=(), name=f'TRobot {self.name}' )
-        self._tRobot.start()
-        while ( not self._tRunning ):
-            time.sleep( 0.0001 )
-        return True
+    def run( self, conn:socket.socket ):
+        """
+        Ejecuta para el robot cada comando que va recibiendo
+        desde el socket
 
-    #--- Finaliza el thread del robot
+        Parameters
+            conn: el socket a utilizar
+        """
+        # verifiquemos que no este en ejecucion este robot
+        if( not self.lock.acquire( blocking=False ) ): return
+
+        # aceptamos
+        self.running = True
+        print( f'Playground >> Robot {self.name} ejecutando' )
+        try:
+            # informamos el tipo de robot que somos
+            conn.sendall( bytearray( self.tipo + '\n', 'iso-8859-1' ) )
+
+            # el lector e interprete de los comandos
+            while( self.running ):
+                try:
+                    # leemos el comando y verificamos la conexion
+                    cmd = RobotBase.readline( conn )
+                    if( cmd == '' ): break
+
+                    # lo preparamos para que sea procesado en el loop de enki
+                    self.message = json.loads( cmd )
+                    self.hasMessage = True
+
+                    # esperamos a que haya sido procesado en el loop de enki
+                    while( not self.hasAnswer ):
+                        time.sleep( 0.0001 )
+                    self.hasAnswer = False
+
+                    # enviamos la respuesta al cliente
+                    resp = json.dumps( self.message ) + '\n'
+                    resp = bytearray( resp, 'iso-8859-1' )
+                    conn.sendall( resp )
+                    self.message = None
+                except socket.timeout as e:
+                    pass
+                except Exception as e:
+                    self.running = False
+                time.sleep( 0.0001 )
+        except:
+            pass
+
+        # eso es todo
+        print( f'Playground >> Robot {self.name} finalizado' )
+        self.message = None
+        self.hasMessage = False
+        self.hasAnswer = False
+        self.lock.release()
+
     def finish( self ):
-        if( self._tRunning ):
-            self._tRunning = False
-            self._tRobot.join()
+        """
+        Finaliza la ejecucion del lector e interprete de comandos del robot
+        """
+        # debe estar en ejecunion
+        while( self.lock.locked() ):
+            # cambiamos su variable de control
+            self.running = False
+            time.sleep( 0.0001 )
 
+    def setSpeed( self, leftSpeed:int, rightSpeed:int ):
+        """
+        Cambia la velocidad de las ruedas del robot
 
-    #--- Cambia velocidad de sus ruedas
-    def setSpeed( self, leftSpeed, rightSpeed ):
+        Parameters
+            leftSpeed : valor para la rueda izquierda
+            rightSpeed: valor para la rueda derecha
+        """
         self.leftSpeed = leftSpeed
         self.rightSpeed = rightSpeed
-        return { 'error': '', 'answer':{} }
+        return None
 
-    #--- Privadas
-
-    #--- El interprete de comandos
-    def _TRobot( self ):
-        print( f'Playground >> Robot {self.name}: Ejecutando' )
-
-        self._tRunning = True
-        while( self._tRunning ):
-            try:
-                self.message = BasicSockJson.read( self.sock, self.buff )
-                self.hasMessage = True
-
-                while( not self.hasAnswer ):
-                    time.sleep( 0.0001 )
-                self.hasAnswer = False
-
-                BasicSockJson.send( self.sock, self.message )
-                self.message = None
-            except Exception as e:
-                print( e )
-                self._tRunning = False
-                break
-            time.sleep( 0.0001 )
-
-        if( not self.sock is None ):
-            self.sock.shutdown( socket.SHUT_RDWR )
-            self.sock.close()
-            self.sock = None
-        self._tRobot = None
-        self.message = None
-        self.hasMessage = False
-        self.hasAnswer = False
-        print( f'Playground >> Robot {self.name}: Finalizado' )
 
     #--- Enki loop
-    def controlStep( self, dt ):
+    def controlStep( self, dt:float ):
+        """
+        Invocada desde la libreria 'pyenki' para cada robot
+
+        Este metodo es interno a la clase
+
+        Parameters
+            dt: ???
+        """
+        # procesamos el mensaje recibido en el metodo run()
         if( self.hasMessage ):
             self.hasMessage = False
 
@@ -95,6 +127,30 @@ class RobotBase():
                     raise KeyError
             except Exception as e:
                 print( e )
-                self.message = { 'error': 'Bad Command', 'answer':{} }
+                self.message = None
 
             self.hasAnswer = True
+            time.sleep( 0.0001 )
+
+    def readline( conn:socket.socket ) -> str:
+        """
+        Lee una linea desde el socket
+
+        Este metodo es interno a la clase
+
+        Parameters
+            conn: el socket desde el cual leer
+
+        Return
+            La linea leida
+        """
+        ll = 256
+        buff = bytearray( ll )
+        n = 0
+        while( n < ll ):
+            c = conn.recv(1)
+            if( c == b'' ): return ''       # la conexion fue cerrada remotamente
+            if( c == b'\n' ): break         # fin de linea
+            buff[n] = ord( c )
+            n += 1
+        return buff[:n].decode( 'iso-8859-1' )

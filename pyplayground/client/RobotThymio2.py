@@ -1,36 +1,31 @@
-"""
-Wrapper para el robot del tipo Thymio2
-
-    from pyplayground.client import RobotFactory
-
-    rob = RobotFactory.connectRobot( 'Thymio-01', host, port )
-    rob.setSpeed( -1000, 1000 )
-    sensores = rob.getSensors()
-    rob.setLedIntensity( ( 3:0.5, 5:1.0 } )
-"""
-
 import socket
 
-import pyplayground.utils.BasicSockJson as BasicSockJson
 import pyplayground.client.RobotBase as RobotBase
 
 class RobotThymio2( RobotBase.RobotBase ):
+    """
+    Clase 'wrapper' para acceder a un robot remoto del tipo EPuck
+
+    Parameters
+        name: nombre del robot a controlar en el playground
+        host: servidor en donde se encuenra este robot
+        port: puerta en donde se encuentra este robot
+        sock: socket para comunicarse con el robot remoto
+    """
     def __init__( self, name:str, host:str, port:int, sock:socket.socket ):
         super().__init__( name, host, port, sock )
 
-    def __str__( self ):
-        return f'RobotThymio2 >> name:{self.name} - host={self.host} - port={self.port}'
-
-    def setLedsIntensity( self, leds:dict ) -> None:
+    def setLedsIntensity( self, leds:list ):
         """
-        Cambia la intensidad de varios LEDs del robot
+        Cambia la intensidad de los leds del robot
 
         Parameters
-          leds: Un diccionario con los leds a afectar en su intensidad
-                El indice corresponde al número del led
-                El valor corresponde a su intensidad (float entre 0 y 1
+            leds: un arreglo con el valor del tipo float (0 a 1) a
+                  asignar como intensidad a cada led. El indice del
+                  arreglo corresponde al led a operar
         """
         pkg = { 'cmd':'setLedsIntensity', 'leds': leds }
-        BasicSockJson.send( self.sock, pkg )
-        resp = BasicSockJson.read( self.sock, self.buff )['answer']
-        return None
+        resp = self.sendPkg( pkg )
+
+    def __str__( self ):
+        return f'RobotThymio2 >> name:{self.name} - host={self.host} - port={self.port}'

@@ -1,15 +1,31 @@
-import pyenki
-import server.RobotBase as RobotBase
+from pyenki import EPuck
+from server.RobotBase import RobotBase
 
-class MyEPuck( RobotBase.RobotBase,pyenki.EPuck ):
+class RobotEPuck( RobotBase, EPuck ):
+    """
+    Clase para interactuar con los robots del tipo EPuck de pyenki
+    """
+
     tipo = 'epuck'
 
     #--- Constructor
     def __init__( self, name ):
+        """
+        Constructor para robots del tipo 'EPuck'
+
+        Parameters
+          name: Nombre para el robot
+        """
         super().__init__( name )
 
     #--- Retorna un diccionario con el valor de sus sensores
-    def getSensors( self ):
+    def getSensors( self ) -> dict:
+        """
+        Obtiene el valor de los sensores del robot
+
+        Return
+            Los sensores del robot y sus valores
+        """
         sensors = {
             "pos":self.pos,
             "leftSpeed":self.leftSpeed,
@@ -36,12 +52,24 @@ class MyEPuck( RobotBase.RobotBase,pyenki.EPuck ):
             #"viscousFrictionCoefficient":self.viscousFrictionCoefficient,
             #"viscousMomentFrictionCoefficient":self.viscousMomentFrictionCoefficient
         }
-        return { 'error': '', 'answer':{ 'sensors':sensors } }
+        return sensors
 
-    def setLedRing( self, on_off ):
+    def setLedRing( self, on_off:int ):
+        """
+        Apaga o enciende el anillo que rodea al robot
+
+        Parameters
+          on_off: 1 para encender, 0 para apagar
+        """
         super().setLedRing( on_off )
-        return { 'error': '', 'answer':{} }
 
-    def getCameraImage( self ):
+    def getCameraImage( self ) -> bytearray:
+        """
+        Obtiene la imagen de la camara lineal del robot.
+        La imagen es de 60x1 pixeles
+
+        Returns
+            La magen lineal
+        """
         image = bytearray( [ int(v*255) for c in self.cameraImage for v in c.components] ).decode( 'iso-8859-1' )
-        return { 'error': '', 'answer':{ 'image':image } }
+        return image

@@ -2,7 +2,7 @@ import time
 import random
 import subprocess
 
-from pyplayground.client import RobotFactory
+from pyplayground.client.RobotFactory import RobotFactory
 import pygame
 
 # THE main
@@ -22,9 +22,9 @@ def main():
     # Usamos try/except para conocer los errores que se produzcan
     try:
         # Accesamos el robot y configuramos algunos de sus atributos
-        epuck  = RobotFactory.connectRobot( 'Epuck-01' , host, port )
+        epuck  = RobotFactory.connect( 'Epuck-01' , host, port )
         epuck.setLedRing( True )
-        epuck.setSpeed( -10, 10 )
+        epuck.setSpeed( -5, 5 )
 
         # Obtenemos la primera imagen
         img = epuck.getCameraImage()
@@ -35,7 +35,8 @@ def main():
         screen = pygame.display.set_mode( ( imglen*10, 80) )
 
         # Loop clasico
-        while( True ):
+        t = time.time()
+        while( time.time() - t < 5 ):
             # trazamos la imagen de la camara
             for i in range( imglen ):
                 color = img[ i ]
@@ -45,6 +46,8 @@ def main():
             # obtenemos la siguiente imagen
             img = epuck.getCameraImage()
             time.sleep( 0.001 )
+        epuck.setSpeed( 0, 0 )
+        epuck.close()
     except ConnectionResetError:
         print( 'Conexion abortada' )
     except Exception as e:

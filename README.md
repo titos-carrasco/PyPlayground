@@ -14,6 +14,12 @@ Tested on
 + Windows
 	+ Windows 10, Python 3.9.0, Qt5.12.10, Boost 1.76.0
 
+v1.5.0
++ Refactoring simplificando la implementación
++ Documenta las clases
++ Agrega Test_Help.py para desplegar la documentación
++ Elimina paquete Utils
+
 v1.1.0
 + Added support for EPuck linear camera image
 + Fix conversion for color from worlds files to pyenki Color

@@ -1,28 +1,25 @@
-"""
-Clase base de los robots
-"""
 import socket
-
-import pyplayground.utils.BasicSockJson as BasicSockJson
+import json
 
 class RobotBase():
     """
-    Parameters
-      name: Nombre del robot a conectar
-      host: Servidor en donde se encuentra el robot
-      port: Puerta en donde escucha el robot
-      sock: Socket en donde esta conectado el robot
-    """
-    LLEN = 512*3
+    Clase base de los robots
 
-    def __init__( self, name:str, host:str, port:int, sock:socket.socket ) -> None:
+    Parameters
+        name: nombre del robot a controlar en el playground
+        host: servidor en donde se encuenra este robot
+        port: puerta en donde se encuentra este robot
+        sock: socket para comunicarse con el robot remoto
+    """
+
+    def __init__( self, name:str, host:str, port:int, sock:socket.socket ):
         self.name = name
         self.host = host
         self.port = port
         self.sock = sock
-        self.buff = bytearray( RobotBase.LLEN )
+        self.buff = bytearray( 512*3 )
 
-    def close( self ) -> None:
+    def close( self ):
         """
         Cierra la conexion con el robot
         """
@@ -37,7 +34,7 @@ class RobotBase():
 
     def getName( self ) -> str:
         """
-        Retorna el nombre del robot
+        Obtiene el nombre del robot
 
         Return
             El nombre del robot
@@ -46,28 +43,53 @@ class RobotBase():
 
     def setSpeed( self, left:int, right:int ) -> None:
         """
-        Cambia la velocidad de los motores de las ruedas del robot'
+        Cambia la velocidad de las ruedas del robot
 
         Parameters
-          left : intensidad rueda izquierda (-1000 a 1000)
-          right: intensidad rueda derecha (-1000 a 1000)
+            leftSpeed : valor para la rueda izquierda
+            rightSpeed: valor para la rueda derecha
         """
         pkg = { 'cmd':'setSpeed', 'leftSpeed': left, 'rightSpeed': right }
-        BasicSockJson.send( self.sock, pkg )
-        resp = BasicSockJson.read( self.sock, self.buff )['answer']
-        return None
+        resp = self.sendPkg( pkg )
 
     def getSensors( self ) -> dict :
         """
-        Obtiene el valor de todos los sensores del robot
+        Obtiene el valor de los sensores del robot
 
         Return
-            Un diccionario con el valor de los sensores
+            Los sensores del robot y sus valores
         """
         pkg = { 'cmd':'getSensors' }
-        BasicSockJson.send( self.sock, pkg )
-        resp = BasicSockJson.read( self.sock, self.buff )['answer']['sensors']
+        resp = self.sendPkg( pkg )
         return resp
+
+    def sendPkg( self, pkg:dict ) -> object:
+        self.sock.sendall( bytearray( json.dumps( pkg ) + '\n', 'iso-8859-1' ) )
+        resp = self.readline()
+        return json.loads( resp )
+
+
+    def readline( self ) -> str:
+        """
+        Lee una linea desde el socket
+
+        Este metodo es interno a la clase
+
+        Parameters
+            conn: el socket desde el cual leer
+
+        Return
+            La linea leida
+        """
+        ll = len( self.buff )
+        n = 0
+        while( n < ll ):
+            c = self.sock.recv(1)
+            if( c == b'' ): return ''       # la conexion fue cerrada remotamente
+            if( c == b'\n' ): break         # fin de linea
+            self.buff[n] = ord( c )
+            n += 1
+        return self.buff[:n].decode( 'iso-8859-1' )
 
     def __str__( self ):
         return f'RobotControl >> name:{self.name} - host={self.host} - port={self.port}'

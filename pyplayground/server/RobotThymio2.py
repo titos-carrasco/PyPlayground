@@ -1,15 +1,26 @@
-import pyenki
-import server.RobotBase as RobotBase
+from pyenki import Thymio2
+from server.RobotBase import RobotBase
 
-class MyThymio2( RobotBase.RobotBase, pyenki.Thymio2 ):
+class RobotThymio2( RobotBase, Thymio2 ):
+    """
+    Clase para interactuar con los robots del tipo Thymio2 del pyenki
+
+    Parameters
+      name: nombre para el robot
+    """
+
     tipo = 'thymio2'
 
-    #--- Constructor
-    def __init__( self, name ):
+    def __init__( self, name:str ):
         super().__init__( name )
 
-    #--- Retorna un diccionario con el valor de sus sensores
-    def getSensors( self ):
+    def getSensors( self ) -> dict:
+        """
+        Obtiene el valor de los sensores del robot
+
+        Return
+            Los sensores del robot y sus valores
+        """
         sensors = {
             "pos":self.pos,
             "leftSpeed":self.leftSpeed,
@@ -36,9 +47,16 @@ class MyThymio2( RobotBase.RobotBase, pyenki.Thymio2 ):
             #"viscousFrictionCoefficient":self.viscousFrictionCoefficient,
             #"viscousMomentFrictionCoefficient":self.viscousMomentFrictionCoefficient
         }
-        return { 'error': '', 'answer':{ 'sensors':sensors } }
+        return sensors
 
-    def setLedsIntensity( self, leds ):
-        for led in leds:
-            self.setLedIntensity( int(led), leds[led] )
-        return { 'error': '', 'answer':{} }
+    def setLedsIntensity( self, leds:list ):
+        """
+        Cambia la intensidad de los leds del robot
+
+        Parameters
+            leds: un arreglo con el valor del tipo float (0 a 1) a
+                  asignar como intensidad a cada led. El indice del
+                  arreglo corresponde al led a operar
+        """
+        for idx in range( len(leds) ):
+            self.setLedIntensity( idx, leds[idx] )

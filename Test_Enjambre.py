@@ -2,7 +2,7 @@ import time
 import random
 import subprocess
 
-from pyplayground.client import RobotFactory
+from pyplayground.client.RobotFactory import RobotFactory
 
 # THE main
 def main():
@@ -24,20 +24,23 @@ def main():
         robots = []
         for p in range( 44444, 44480 ):  # 44480
             name = f'Thymio-{p}'
-            r = RobotFactory.connectRobot( name, host, port )
+            r = RobotFactory.connect( name, host, port )
             robots.append( r)
 
         # Loop clasico
-        while( True ):
+        t = time.time()
+        while( time.time() - t < 5 ):
             for r in robots:
                 r.setSpeed( random.uniform( -1000,1000 ), random.uniform( -1000,1000 ) )
             time.sleep( 2 )
+        for r in robots: r.close()
     except ConnectionResetError:
         print( 'Conexion abortada' )
     except Exception as e:
         print( e )
 
     # Detenemos el playground
+    time.sleep( 5 )
     pg.send_signal( subprocess.signal.SIGTERM )
 
 

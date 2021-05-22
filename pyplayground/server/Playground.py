@@ -1,3 +1,10 @@
+"""
+Implementacion de un servidor de robots (playground) utilizando la
+la libreria del simulador 2d ENKI de robots
+
+Utiliza un hack para acceder a la libreria pyenki desde Windows y
+Linux
+"""
 import os
 import sys
 import threading
@@ -6,6 +13,7 @@ import time
 import json
 import math
 
+#### Inicio del hack
 # Not the best way
 pkgpath = os.path.dirname( os.path.abspath( f'{__file__}' ) )
 if( pkgpath in sys.path ):
@@ -23,13 +31,19 @@ if( os.name == 'nt' ):
 # Linux
 else:
     sys.path.append( f'{pkgpath}/server/linux' )
+#### Inicio del hack
 
 import pyenki
-import server.RobotFactory as RobotFactory
-import utils.BasicSockJson as BasicSockJson
+from server.RobotFactory import RobotFactory
 
 class Playground():
-    #--- Constructor
+    """
+    El playground de robots
+
+    Parameters
+        world_def: nombre del archivo con la descripcion del playground
+                   a construir (debe estar en formato JSON)
+    """
     def __init__( self, world_def  ):
         self.host = None
         self.port = None
@@ -40,11 +54,17 @@ class Playground():
         self.robots = {}
         self._tDispatcher = None
         self._tRunning = False
-        self._makeWorld( world_def )
+        self.makeWorld( world_def )
 
-    #-- QT app debe estar en el thread principal
     def run( self ):
-        self._tDispatcher = threading.Thread( target=self._TDispatcher, args=(), name='TDispatcher' )
+        """
+        Lanza en ejecución el playground.
+
+        Dada la implementacion de la libreria 'pyenki' este metodo
+        no retorna
+        """
+        #-- QT app debe estar en el thread principal
+        self._tDispatcher = threading.Thread( target=self.TDispatcher, args=(), name='TDispatcher' )
         self._tDispatcher.start()
         while ( not self._tRunning ):
             time.sleep( 0.0001 )
@@ -55,9 +75,15 @@ class Playground():
         except Exception as e:
             print( e )
             pass
+        print( f'Playground >> Finalizando ...' )
         self.finish()
 
     def finish( self ):
+        """
+        Finaliza la ejecucion del playground.
+
+        Este metodo no es utilizado
+        """
         if( self._tRunning ):
             self._tRunning = False
             self._tDispatcher.join()
@@ -66,24 +92,33 @@ class Playground():
         self.world = None
         self.robots = None
 
-    #--- Privadas
 
-    #--- Arma el mundo segun la definicion especificada en el archivo
-    def _makeWorld( self, fn_world_def ):
+    def makeWorld( self, fn_world_def:str ):
+        """
+        Arma el mundo segun la definicion especificada en el archivo
+
+        Este metodo es interno a la clase
+
+        Parameters
+            fn_world_def: nombre del archivo con la descripcion del playground
+                          a construir (debe estar en formato JSON)
+        """
+        # lee el archivo de descripcion
         f = open( fn_world_def, 'r' )
         data = f.read()
         world_def = json.loads( data )
         f.close()
 
+        # contruye el playground segun definicion en el archivo
         colors = {}
         for elem in world_def:
             tipo = elem['type']
 
-            #--- Un color
+            # los colores
             if( tipo == 'color' ):
                 colors[ elem['name'] ] = pyenki.Color( elem['r']/255., elem['g']/255., elem['b']/255., elem['a']/255. )
 
-            #--- El mundo
+            # atributos del mundo
             elif( tipo == 'world' ):
                 if( elem['width'] == 0 or elem['height'] == 0 ):
                     self.width = 100
@@ -100,7 +135,7 @@ class Playground():
                 self.host = elem['host'] if elem['host'] != '' else '0.0.0.0'
                 self.port = elem['port']
 
-            #--- Un elemento en el mundo
+            # elementos del mundo
             elif( tipo == 'box' ):
                 box = pyenki.RectangularObject( elem['l1'], elem['l2'], elem['height'], elem['mass'], colors[ elem['color'] ] )
                 box.pos = ( elem['x'], elem['y'] )
@@ -110,56 +145,52 @@ class Playground():
                 cyl.pos = ( elem['x'], elem['y'] )
                 self.world.addObject( cyl )
 
-            #--- En cuaquier otro caso debe ser un robot
+            # en cuaquier otro caso debe ser un robot
             else:
                 name = elem[ 'name' ]
                 if( name in self.robots ): raise Exception( f'Robot {name} se encuentra duplicado' )
-                rob = RobotFactory.makeRobot( tipo, name )
+                rob = RobotFactory.make( tipo, name )
                 if( rob is None ): raise Exception( f'Robot {name} no se encuentra definido' )
                 rob.pos = ( elem['x'], elem['y'] )
                 self.world.addObject( rob )
                 self.robots[name] = rob
 
-    #-- El despachador de conexiones entrantes
-    def _TDispatcher( self ):
-        LLEN = 512*3
+    def TDispatcher( self ):
+        """
+        Tarea para despachar las conexiones entrantes desde los clientes
+
+        Este metodo es interno a la clase
+        """
+        # utiliza un unico socket
         sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
         sock.bind( ( self.host, self.port ) )
-        sock.listen( len( self.robots ) )
-        #sock.setblocking( 0 )
-        buff = bytearray( LLEN )
+        sock.listen( 5 )
         print( f'Playground >> Esperando en tcp://{self.host}:{self.port}' )
 
+        sock.settimeout( 1 )
         self._tRunning = True
         while( self._tRunning ):
             try:
+                # recibe las conexiones entrantes
                 conn, addr = sock.accept()
-                print( f'Playground >> Conexion iniciada desde {addr}' )
 
-                msg = BasicSockJson.read( conn, buff )
-                if( ( 'cmd' in msg and msg['cmd'] == 'connect' ) and ( 'name' in msg and msg['name'] in self.robots ) ):
-                    rob = self.robots[ msg['name'] ]
-                    if( rob.start( conn ) ):
-                        BasicSockJson.send( conn, { 'error':'', 'answer':{ "type":rob.tipo } } )
-                    else:
-                        BasicSockJson.send( conn, { 'error':'Robot already running', 'answer':{} } )
-                        raise KeyError
-                else:
-                    BasicSockJson.send( conn, { 'error':'Bad Packet', 'answer':{} } )
-                    raise KeyError
-            except BlockingIOError:
+                # trata de procesarlas en una tarea especializada
+                t = threading.Thread( target=RobotFactory.TRobot, args=( self.robots, conn, addr ), name='TRobot' )
+                t.start()
+            except socket.timeout as e:
+                #print( e )
                 pass
             except Exception as e:
-                conn.shutdown( socket.SHUT_RDWR )
-                conn.close()
-                print( f'Playground >> Conexion rechazada' )
+                print( e )
 
+        # eso es todo
         sock.shutdown( socket.SHUT_RDWR )
         sock.close()
         sock = None
 
-        for robot_name in self.robots:
-            self.robots[ robot_name ].finish()
+        for name in self.robots:
+            print( f'Playground >> Finalizando robot "{name}"' )
+            self.robots[ name ].finish()
 
 
 #--- show time

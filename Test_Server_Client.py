@@ -2,11 +2,11 @@ import time
 import random
 import subprocess
 
-from pyplayground.client import RobotFactory
+from pyplayground.client.RobotFactory import RobotFactory
 
 # THE main
 def main():
-    # Levantamos el playground en otro proceso
+    # levantamos el playground en otro proceso
     try:
         pg = subprocess.Popen( [ 'python', 'pyplayground/server/Playground.py', 'worlds/simple.world' ], shell=False )
         time.sleep( 1 )
@@ -14,18 +14,19 @@ def main():
         print( e )
         exit()
 
-    # Los datos de conexion al playground
+    # los datos de conexion al playground
     host = '127.0.0.1'
     port = 44444
 
-    # Usamos try/except para conocer los errores que se produzcan
+    # usamos try/except para conocer los errores que se produzcan
     try:
         # Accesamos los robots
-        rob01 = RobotFactory.connectRobot( 'Thymio-01', host, port )
-        rob02 = RobotFactory.connectRobot( 'Epuck-01', host, port )
+        rob01 = RobotFactory.connect( 'Thymio-01', host, port )
+        rob02 = RobotFactory.connect( 'Epuck-01', host, port )
 
-        # Loop clasico
-        while( True ):
+        # loop clasico
+        t = time.time()
+        while( time.time() - t < 5 ):
             rob01.setSpeed( random.uniform(-100,100), random.uniform(-100,100) )
             rob02.setSpeed( random.uniform(-100,1000), random.uniform(-100,100) )
 
@@ -33,12 +34,16 @@ def main():
             s02 = rob02.getSensors()
 
             time.sleep( 1 )
+        rob01.setSpeed( 0, 0 )
+        rob02.setSpeed( 0, 0 )
+        rob01.close()
+        rob02.close()
     except ConnectionResetError:
         print( 'Conexion abortada' )
     except Exception as e:
         print( e )
 
-    # Detenemos el playground
+    # detenemos el playground
     pg.send_signal( subprocess.signal.SIGTERM )
 
 

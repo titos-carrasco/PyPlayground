@@ -1,51 +1,45 @@
-"""
-Wrapper para el robot del tipo EPuck
-
-    from pyplayground.client import RobotFactory
-
-    rob = RobotFactory.connectRobot( 'Epuck-01', host, port )
-    rob.setSpeed( -1000, 1000 )
-    sensores = rob.getSensors()
-    rob.setLedRing( True )
-    image = rob.getCameraImage()
-"""
 import socket
 
-import pyplayground.utils.BasicSockJson as BasicSockJson
 import pyplayground.client.RobotBase as RobotBase
 
 class RobotEPuck( RobotBase.RobotBase ):
+    """
+    Clase 'wrapper' para acceder a un robot remoto del tipo EPuck
+
+    Parameters
+        name: nombre del robot a controlar en el playground
+        host: servidor en donde se encuenra este robot
+        port: puerta en donde se encuentra este robot
+        sock: socket para comunicarse con el robot remoto
+    """
     def __init__( self, name:str, host:str, port:int, sock:socket.socket ):
         super().__init__( name, host, port, sock )
 
-    def __str__( self ):
-        return f'RobotEnki >> name:{self.name} - host={self.host} - port={self.port}'
-
-    def setLedRing( self, on_off:bool ) -> None:
+    def setLedRing( self, on_off:bool ):
         """
-        apaga o enciende el anillo que rodea al robot
+        Apaga o enciende el anillo que rodea al robot
 
         Parameters
-          on_off: True enciende el anillo, False lo apaga
-
+          on_off: True para encender, False para apagar
         """
         led_on = 1 if on_off else 0
         pkg = { 'cmd':'setLedRing', 'estado': on_off }
-        BasicSockJson.send( self.sock, pkg )
-        resp = BasicSockJson.read( self.sock, self.buff )['answer']
-        return None
+        resp = self.sendPkg( pkg )
 
     def getCameraImage( self ) -> list :
         """
-        Obtiene la imagen de la camara lineal del robot
+        Obtiene la imagen de la camara lineal del robot.
+        La imagen es de 60x1 pixeles
 
-        Return
-            una lista con los puntos de la imagen (60 de ancho x 1 de alto)
+        Returns
+            La magen lineal
         """
         pkg = { 'cmd':'getCameraImage' }
-        BasicSockJson.send( self.sock, pkg )
-        resp = BasicSockJson.read( self.sock, self.buff )['answer']['image']
+        resp = self.sendPkg( pkg )
         resp = bytearray( resp, 'iso-8859-1' )
         l = len( resp )
         resp = [ tuple( resp[i:i+4] ) for i in range( 0, l, 4 ) ]
         return resp
+
+    def __str__( self ):
+        return f'RobotEnki >> name:{self.name} - host={self.host} - port={self.port}'

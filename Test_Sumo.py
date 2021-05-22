@@ -2,7 +2,7 @@ import time
 import random
 import subprocess
 
-from pyplayground.client import RobotFactory
+from pyplayground.client.RobotFactory import RobotFactory
 
 # THE main
 def main():
@@ -22,11 +22,12 @@ def main():
     speed = 100
     try:
         # Accesamos el robot y configuramos algunos de sus atributos
-        rob = RobotFactory.connectRobot( 'Thymio-01', host, port )
+        rob = RobotFactory.connect( 'Thymio-01', host, port )
         rob.setSpeed( speed, speed )
 
         # Loop clasico
-        while( True ):
+        t = time.time()
+        while( time.time() - t < 15 ):
             sensores = rob.getSensors()
 
             print( 'proximitySensorValues:' , end='' )
@@ -56,6 +57,8 @@ def main():
                 time.sleep( 2 )
                 rob.setSpeed( speed, speed )
             time.sleep( 0.001 )
+        rob.setSpeed( 0, 0 )
+        rob.close()
     except ConnectionResetError:
         print( 'Conexion abortada' )
     except Exception as e:
