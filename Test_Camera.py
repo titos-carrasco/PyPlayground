@@ -9,20 +9,20 @@ import pygame
 def main():
     # Levantamos el playground en otro procesos
     try:
-        pg = subprocess.Popen( [ 'python', 'pyplayground/server/Playground.py', 'worlds/epuck.world' ], shell=False )
+        pg = subprocess.Popen( [ "python", "pyplayground/server/Playground.py", "worlds/epuck.world" ], shell=False )
         time.sleep( 1 )
     except Exception as e:
         print( e )
         exit()
 
     # Los datos de conexion al playground
-    host = '127.0.0.1'
+    host = "127.0.0.1"
     port = 44444
 
     # Usamos try/except para conocer los errores que se produzcan
     try:
         # Accesamos el robot y configuramos algunos de sus atributos
-        epuck  = RobotEPuck( 'Epuck-01' , host, port )
+        epuck  = RobotEPuck( "Epuck-01" , host, port )
         epuck.setLedRing( True )
         epuck.setSpeed( -5, 5 )
 
@@ -49,7 +49,7 @@ def main():
         epuck.setSpeed( 0, 0 )
         epuck.close()
     except ConnectionResetError:
-        print( 'Conexion abortada' )
+        print( "Conexion abortada" )
     except Exception as e:
         print( e )
 

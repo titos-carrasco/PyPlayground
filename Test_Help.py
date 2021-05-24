@@ -16,7 +16,7 @@ import pyplayground.client.RobotThymio2
 
 # THE main
 def main():
-    # Utilice la tecla 'q' para avanzar entre cada pantalla de ayuda
+    # Utilice la tecla "q" para avanzar entre cada pantalla de ayuda
     #help( pyplayground )
     #help( pyplayground.server )
     #help( pyplayground.server.Playground )

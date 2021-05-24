@@ -4,17 +4,23 @@ import pyplayground.client.RobotBase as RobotBase
 
 class RobotEPuck( RobotBase.RobotBase ):
     """
-    Clase 'wrapper' para acceder a un robot remoto del tipo EPuck
+    Clase "wrapper" para acceder a un robot remoto del tipo EPuck
 
     Parameters
         name: nombre del robot a controlar en el playground
         host: servidor en donde se encuenra este robot
         port: puerta en donde se encuentra este robot
     """
-    tipo = 'epuck'
+    tipo = "epuck"
 
     def __init__( self, name:str, host:str, port:int ):
         super().__init__( name, host, port )
+
+    def getSensors( self ):
+        """
+        Actualiza el valor de los sensores del robot
+        """
+        resp = super().getSensors()
 
     def setLedRing( self, on_off:bool ):
         """
@@ -24,7 +30,7 @@ class RobotEPuck( RobotBase.RobotBase ):
           on_off: True para encender, False para apagar
         """
         led_on = 1 if on_off else 0
-        pkg = { 'cmd':'setLedRing', 'estado': on_off }
+        pkg = { "cmd":"setLedRing", "estado": on_off }
         resp = self.sendPkg( pkg )
 
     def getCameraImage( self ) -> list :
@@ -35,12 +41,12 @@ class RobotEPuck( RobotBase.RobotBase ):
         Returns
             La magen lineal
         """
-        pkg = { 'cmd':'getCameraImage' }
+        pkg = { "cmd":"getCameraImage" }
         resp = self.sendPkg( pkg )
-        resp = bytearray( resp, 'iso-8859-1' )
+        resp = bytearray( resp, "iso-8859-1" )
         l = len( resp )
         resp = [ tuple( resp[i:i+4] ) for i in range( 0, l, 4 ) ]
         return resp
 
     def __str__( self ):
-        return f'RobotEnki >> name:{self.name} - host={self.host} - port={self.port}'
+        return f"RobotEnki >> name:{self.name} - host={self.host} - port={self.port}"

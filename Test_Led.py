@@ -9,24 +9,24 @@ from pyplayground.client.RobotEPuck import RobotEPuck
 def main():
     # Levantamos el playground en otro procesos
     try:
-        pg = subprocess.Popen( [ 'python', 'pyplayground/server/Playground.py', 'worlds/simple.world' ], shell=False )
+        pg = subprocess.Popen( [ "python", "pyplayground/server/Playground.py", "worlds/simple.world" ], shell=False )
         time.sleep( 1 )
     except Exception as e:
         print( e )
         exit()
 
     # Los datos de conexion al playground
-    host = '127.0.0.1'
+    host = "127.0.0.1"
     port = 44444
 
     # Usamos try/except para conocer los errores que se produzcan
     try:
         # Accesamos los robots y configuramos algunos de sus atributos
-        thymio = RobotThymio2( 'Thymio-01', host, port )
+        thymio = RobotThymio2( "Thymio-01", host, port )
         leds = [0]*23
         ledval = 0
 
-        epuck  = RobotEPuck( 'Epuck-01' , host, port )
+        epuck  = RobotEPuck( "Epuck-01" , host, port )
         epuck.setLedRing( True )
 
         # Loop clasico
@@ -42,7 +42,7 @@ def main():
         thymio.close()
         epuck.close()
     except ConnectionResetError:
-        print( 'Conexion abortada' )
+        print( "Conexion abortada" )
     except Exception as e:
         print( e )
 

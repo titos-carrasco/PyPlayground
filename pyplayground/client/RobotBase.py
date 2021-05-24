@@ -17,6 +17,12 @@ class RobotBase():
         self.port = port
         self.sock = None
         self.buff = bytearray( 512*3 )
+
+        self.pos = None
+        self.speed = None
+        self.proximitySensorValues = None
+        self.proximitySensorDistances = None
+
         self.connect( name, host, port )
 
     def close( self ):
@@ -49,7 +55,7 @@ class RobotBase():
             leftSpeed : valor para la rueda izquierda
             rightSpeed: valor para la rueda derecha
         """
-        pkg = { 'cmd':'setSpeed', 'leftSpeed': left, 'rightSpeed': right }
+        pkg = { "cmd":"setSpeed", "leftSpeed": left, "rightSpeed": right }
         resp = self.sendPkg( pkg )
 
     def getSensors( self ) -> dict :
@@ -59,8 +65,12 @@ class RobotBase():
         Return
             Los sensores del robot y sus valores
         """
-        pkg = { 'cmd':'getSensors' }
+        pkg = { "cmd":"getSensors" }
         resp = self.sendPkg( pkg )
+        self.pos = tuple( resp["pos"] )
+        self.speed = ( resp["leftSpeed"], resp["rightSpeed"]  )
+        self.proximitySensorValues = tuple( resp["proximitySensorValues"] )
+        self.proximitySensorDistances = tuple( resp["proximitySensorDistances"] )
         return resp
 
     def connect(self, name:str, host:str, port:int ):
@@ -74,14 +84,14 @@ class RobotBase():
           host: Servidor en donde se encuentra el playground
           port: Puerta en donde escucha el playground
         """
-        if( host == '' ): host = '0.0.0.0'
+        if( host == "" ): host = "0.0.0.0"
         try:
             # nos conectamos al servidor
             self.sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
             self.sock.connect( ( host, port ) )
 
             # pedimos conexion al robot
-            self.sock.sendall( bytearray( name + '\n', 'iso-8859-1' ) )
+            self.sock.sendall( bytearray( name + "\n", "iso-8859-1" ) )
 
             # recibimos la respuesta del servidor
             tipo = self.readline()
@@ -100,7 +110,7 @@ class RobotBase():
 
 
     def sendPkg( self, pkg:dict ) -> object:
-        self.sock.sendall( bytearray( json.dumps( pkg ) + '\n', 'iso-8859-1' ) )
+        self.sock.sendall( bytearray( json.dumps( pkg ) + "\n", "iso-8859-1" ) )
         resp = self.readline()
         return json.loads( resp )
 
@@ -121,11 +131,11 @@ class RobotBase():
         n = 0
         while( n < ll ):
             c = self.sock.recv(1)
-            if( c == b'' ): return ''       # la conexion fue cerrada remotamente
-            if( c == b'\n' ): break         # fin de linea
+            if( c == b"" ): return ""       # la conexion fue cerrada remotamente
+            if( c == b"\n" ): break         # fin de linea
             self.buff[n] = ord( c )
             n += 1
-        return self.buff[:n].decode( 'iso-8859-1' )
+        return self.buff[:n].decode( "iso-8859-1" )
 
     def __str__( self ):
-        return f'RobotControl >> name:{self.name} - host={self.host} - port={self.port}'
+        return f"RobotControl >> name:{self.name} - host={self.host} - port={self.port}"

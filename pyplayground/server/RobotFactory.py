@@ -22,9 +22,9 @@ class RobotFactory():
         Return
             Un objeto del tipo de robot solicitado
         """
-        if( tipo == 'thymio2' ):
+        if( tipo == "thymio2" ):
             return RobotThymio2( name )
-        elif( tipo == 'epuck' ):
+        elif( tipo == "epuck" ):
             return RobotEPuck( name )
         else:
             return None
@@ -41,14 +41,14 @@ class RobotFactory():
           conn  : el socket abierto para la comunicacion
           addr  : informacion del punto remoto del socket
         """
-        print( f'Playground >> Conexion recibida desde {addr}' )
+        print( f"Playground >> Conexion recibida desde {addr}" )
 
-        name = ''
+        name = ""
         try:
             # necesitamos el nombre del robot a utilizar
             conn.settimeout( 2 )
             name = RobotFactory.readline( conn )
-            print( f'Playground >> Conectando con robot {name}' )
+            print( f"Playground >> Conectando con robot {name}" )
             # lo ponemos en accion
             if( name in robots ):
                 robots[name].run( conn )
@@ -62,7 +62,7 @@ class RobotFactory():
         except:
             pass
         conn = None
-        print( f'Playground >> Conexion finalizada para {addr}' )
+        print( f"Playground >> Conexion finalizada para {addr}" )
 
     # permite leer una linea desde el socket
     def readline( conn:socket.socket ) -> str:
@@ -82,8 +82,8 @@ class RobotFactory():
         n = 0
         while( n < ll ):
             c = conn.recv(1)
-            if( c == b'' ): break           # el socket fue cerrado remotamente
-            if( c == b'\n' ): break         # fin de linea
+            if( c == b"" ): break           # el socket fue cerrado remotamente
+            if( c == b"\n" ): break         # fin de linea
             buff[n] = ord( c )
             n += 1
-        return buff[:n].decode( 'iso-8859-1' )
+        return buff[:n].decode( "iso-8859-1" )

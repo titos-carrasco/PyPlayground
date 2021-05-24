@@ -34,17 +34,17 @@ class RobotBase():
 
         # aceptamos
         self.running = True
-        print( f'Playground >> Robot {self.name} ejecutando' )
+        print( f"Playground >> Robot {self.name} ejecutando" )
         try:
             # informamos el tipo de robot que somos
-            conn.sendall( bytearray( self.tipo + '\n', 'iso-8859-1' ) )
+            conn.sendall( bytearray( self.tipo + "\n", "iso-8859-1" ) )
 
             # el lector e interprete de los comandos
             while( self.running ):
                 try:
                     # leemos el comando y verificamos la conexion
                     cmd = RobotBase.readline( conn )
-                    if( cmd == '' ): break
+                    if( cmd == "" ): break
 
                     # lo preparamos para que sea procesado en el loop de enki
                     self.message = json.loads( cmd )
@@ -56,8 +56,8 @@ class RobotBase():
                     self.hasAnswer = False
 
                     # enviamos la respuesta al cliente
-                    resp = json.dumps( self.message ) + '\n'
-                    resp = bytearray( resp, 'iso-8859-1' )
+                    resp = json.dumps( self.message ) + "\n"
+                    resp = bytearray( resp, "iso-8859-1" )
                     conn.sendall( resp )
                     self.message = None
                 except socket.timeout as e:
@@ -69,7 +69,7 @@ class RobotBase():
             pass
 
         # eso es todo
-        print( f'Playground >> Robot {self.name} finalizado' )
+        print( f"Playground >> Robot {self.name} finalizado" )
         self.message = None
         self.hasMessage = False
         self.hasAnswer = False
@@ -101,7 +101,7 @@ class RobotBase():
     #--- Enki loop
     def controlStep( self, dt:float ):
         """
-        Invocada desde la libreria 'pyenki' para cada robot
+        Invocada desde la libreria "pyenki" para cada robot
 
         Este metodo es interno a la clase
 
@@ -113,15 +113,15 @@ class RobotBase():
             self.hasMessage = False
 
             try:
-                if( self.message['cmd'] == 'getSensors' ):
+                if( self.message["cmd"] == "getSensors" ):
                     self.message = self.getSensors()
-                elif( self.message['cmd'] == 'setSpeed' ):
-                    self.message = self.setSpeed( float( self.message['leftSpeed'] ), float( self.message['rightSpeed'] ) )
-                elif( self.message['cmd'] == 'setLedRing' ):
-                    self.message = self.setLedRing( self.message['estado'] )
-                elif( self.message['cmd'] == 'setLedsIntensity' ):
-                    self.message = self.setLedsIntensity( self.message['leds'] )
-                elif( self.message['cmd'] == 'getCameraImage' ):
+                elif( self.message["cmd"] == "setSpeed" ):
+                    self.message = self.setSpeed( float( self.message["leftSpeed"] ), float( self.message["rightSpeed"] ) )
+                elif( self.message["cmd"] == "setLedRing" ):
+                    self.message = self.setLedRing( self.message["estado"] )
+                elif( self.message["cmd"] == "setLedsIntensity" ):
+                    self.message = self.setLedsIntensity( self.message["leds"] )
+                elif( self.message["cmd"] == "getCameraImage" ):
                     self.message = self.getCameraImage()
                 else:
                     raise KeyError
@@ -149,8 +149,8 @@ class RobotBase():
         n = 0
         while( n < ll ):
             c = conn.recv(1)
-            if( c == b'' ): return ''       # la conexion fue cerrada remotamente
-            if( c == b'\n' ): break         # fin de linea
+            if( c == b"" ): return ""       # la conexion fue cerrada remotamente
+            if( c == b"\n" ): break         # fin de linea
             buff[n] = ord( c )
             n += 1
-        return buff[:n].decode( 'iso-8859-1' )
+        return buff[:n].decode( "iso-8859-1" )

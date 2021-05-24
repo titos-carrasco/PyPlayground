@@ -4,17 +4,24 @@ import pyplayground.client.RobotBase as RobotBase
 
 class RobotThymio2( RobotBase.RobotBase ):
     """
-    Clase 'wrapper' para acceder a un robot remoto del tipo EPuck
+    Clase "wrapper" para acceder a un robot remoto del tipo EPuck
 
     Parameters
         name: nombre del robot a controlar en el playground
         host: servidor en donde se encuenra este robot
         port: puerta en donde se encuentra este robot
     """
-    tipo = 'thymio2'
+    tipo = "thymio2"
 
     def __init__( self, name:str, host:str, port:int  ):
         super().__init__( name, host, port )
+
+    def getSensors( self ):
+        """
+        Actualiza el valor de los sensores del robot
+        """
+        resp = super().getSensors()
+        self.groundSensorValues = tuple( resp["groundSensorValues"] )
 
     def setLedsIntensity( self, leds:list ):
         """
@@ -25,8 +32,8 @@ class RobotThymio2( RobotBase.RobotBase ):
                   asignar como intensidad a cada led. El indice del
                   arreglo corresponde al led a operar
         """
-        pkg = { 'cmd':'setLedsIntensity', 'leds': leds }
+        pkg = { "cmd":"setLedsIntensity", "leds": leds }
         resp = self.sendPkg( pkg )
 
     def __str__( self ):
-        return f'RobotThymio2 >> name:{self.name} - host={self.host} - port={self.port}'
+        return f"RobotThymio2 >> name:{self.name} - host={self.host} - port={self.port}"

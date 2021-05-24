@@ -6,12 +6,12 @@ class RobotEPuck( RobotBase, EPuck ):
     Clase para interactuar con los robots del tipo EPuck de pyenki
     """
 
-    tipo = 'epuck'
+    tipo = "epuck"
 
     #--- Constructor
     def __init__( self, name ):
         """
-        Constructor para robots del tipo 'EPuck'
+        Constructor para robots del tipo "EPuck"
 
         Parameters
           name: Nombre para el robot
@@ -71,5 +71,5 @@ class RobotEPuck( RobotBase, EPuck ):
         Returns
             La magen lineal
         """
-        image = bytearray( [ int(v*255) for c in self.cameraImage for v in c.components] ).decode( 'iso-8859-1' )
+        image = bytearray( [ int(v*255) for c in self.cameraImage for v in c.components] ).decode( "iso-8859-1" )
         return image
