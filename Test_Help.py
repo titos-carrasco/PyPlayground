@@ -4,13 +4,11 @@ import pyplayground.server
 import pyplayground.server.Playground
 import pyplayground.server.RobotBase
 import pyplayground.server.RobotEPuck
-import pyplayground.server.RobotFactory
 import pyplayground.server.RobotThymio2
 
 import pyplayground.client
 import pyplayground.client.RobotBase
 import pyplayground.client.RobotEPuck
-import pyplayground.client.RobotFactory
 import pyplayground.client.RobotThymio2
 
 

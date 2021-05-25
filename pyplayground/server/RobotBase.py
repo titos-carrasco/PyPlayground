@@ -1,6 +1,5 @@
 import threading
 import socket
-import select
 import json
 import time
 
@@ -16,10 +15,6 @@ class RobotBase():
         super().__init__()
         self.name = name
         self.lock = threading.Lock()
-        self.message = None
-        self.hasMessage = False
-        self.hasAnswer = False
-        self.running = False
 
     def run( self, conn:socket.socket ):
         """
@@ -46,23 +41,32 @@ class RobotBase():
                     cmd = RobotBase.readline( conn )
                     if( cmd == "" ): break
 
-                    # lo preparamos para que sea procesado en el loop de enki
-                    self.message = json.loads( cmd )
-                    self.hasMessage = True
-
-                    # esperamos a que haya sido procesado en el loop de enki
-                    while( not self.hasAnswer ):
-                        time.sleep( 0.0001 )
-                    self.hasAnswer = False
+                    # lo procesamos
+                    message= json.loads( cmd )
+                    if( message["cmd"] == "getSensors" ):
+                        resp = self.getSensors()
+                    elif( message["cmd"] == "setSpeed" ):
+                        resp = self.setSpeed( float( message["leftSpeed"] ), float( message["rightSpeed"] ) )
+                    elif( message["cmd"] == "setLedRing" ):
+                        resp = self.setLedRing( message["estado"] )
+                    elif( message["cmd"] == "setLedsIntensity" ):
+                        resp = self.setLedsIntensity( message["leds"] )
+                    elif( message["cmd"] == "getCameraImage" ):
+                        resp = self.getCameraImage()
+                    else:
+                        raise Exception( "Comando no reconocido" )
 
                     # enviamos la respuesta al cliente
-                    resp = json.dumps( self.message ) + "\n"
-                    resp = bytearray( resp, "iso-8859-1" )
+                    if( isinstance( resp, dict ) ):
+                        resp = json.dumps( resp ) + "\n"
+                        resp = bytearray( resp, "iso-8859-1" )
+                    elif( not isinstance( resp, bytes ) ):
+                        raise Exception( "Respuesta debe ser dict o bytes" )
                     conn.sendall( resp )
-                    self.message = None
                 except socket.timeout as e:
                     pass
                 except Exception as e:
+                    print( e )
                     self.running = False
                 time.sleep( 0.0001 )
         except:
@@ -70,22 +74,19 @@ class RobotBase():
 
         # eso es todo
         print( f"Playground >> Robot {self.name} finalizado" )
-        self.message = None
-        self.hasMessage = False
-        self.hasAnswer = False
         self.lock.release()
 
     def finish( self ):
         """
         Finaliza la ejecucion del lector e interprete de comandos del robot
         """
-        # debe estar en ejecunion
+        # debe estar en ejecucion
         while( self.lock.locked() ):
             # cambiamos su variable de control
             self.running = False
             time.sleep( 0.0001 )
 
-    def setSpeed( self, leftSpeed:int, rightSpeed:int ):
+    def setSpeed( self, leftSpeed:int, rightSpeed:int ) -> dict:
         """
         Cambia la velocidad de las ruedas del robot
 
@@ -95,10 +96,23 @@ class RobotBase():
         """
         self.leftSpeed = leftSpeed
         self.rightSpeed = rightSpeed
-        return None
+        return {}
 
+    def getSensors( self ) -> dict:
+        """
+        Obtiene el valor de los sensores del robot
 
-    #--- Enki loop
+        Return
+            Los sensores del robot y sus valores
+        """
+        sensors = {
+            "pos": self.pos,
+            "speed": ( self.leftSpeed, self.rightSpeed ),
+            "proximitySensorValues": self.proximitySensorValues,
+            "proximitySensorDistances": self.proximitySensorDistances
+        }
+        return sensors
+
     def controlStep( self, dt:float ):
         """
         Invocada desde la libreria "pyenki" para cada robot
@@ -108,29 +122,7 @@ class RobotBase():
         Parameters
             dt: ???
         """
-        # procesamos el mensaje recibido en el metodo run()
-        if( self.hasMessage ):
-            self.hasMessage = False
-
-            try:
-                if( self.message["cmd"] == "getSensors" ):
-                    self.message = self.getSensors()
-                elif( self.message["cmd"] == "setSpeed" ):
-                    self.message = self.setSpeed( float( self.message["leftSpeed"] ), float( self.message["rightSpeed"] ) )
-                elif( self.message["cmd"] == "setLedRing" ):
-                    self.message = self.setLedRing( self.message["estado"] )
-                elif( self.message["cmd"] == "setLedsIntensity" ):
-                    self.message = self.setLedsIntensity( self.message["leds"] )
-                elif( self.message["cmd"] == "getCameraImage" ):
-                    self.message = self.getCameraImage()
-                else:
-                    raise KeyError
-            except Exception as e:
-                print( e )
-                self.message = None
-
-            self.hasAnswer = True
-            time.sleep( 0.0001 )
+        pass
 
     def readline( conn:socket.socket ) -> str:
         """

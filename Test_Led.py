@@ -27,18 +27,17 @@ def main():
         ledval = 0
 
         epuck  = RobotEPuck( "Epuck-01" , host, port )
-        epuck.setLedRing( True )
 
         # Loop clasico
         t = time.time()
-        tb = t
+        ledval = 0
         while( time.time() - t < 5 ):
-            if( time.time() - tb > 0.25 ):
-                ledval = 0.5 if ledval == 0 else 0
-                for i in range(3,23): leds[ i ] = ledval
-                thymio.setLedsIntensity( leds )
-                tb = time.time()
-            time.sleep( 0.001 )
+            epuck.setLedRing( ledval )
+            for i in range(3,23): leds[ i ] = ledval
+            thymio.setLedsIntensity( leds )
+            ledval = 0 if ledval == 1 else 1
+            time.sleep( 0.5 )
+
         thymio.close()
         epuck.close()
     except ConnectionResetError:

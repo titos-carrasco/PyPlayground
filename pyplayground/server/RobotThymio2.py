@@ -14,6 +14,7 @@ class RobotThymio2( RobotBase, Thymio2 ):
     def __init__( self, name:str ):
         super().__init__( name )
 
+
     def getSensors( self ) -> dict:
         """
         Obtiene el valor de los sensores del robot
@@ -21,35 +22,11 @@ class RobotThymio2( RobotBase, Thymio2 ):
         Return
             Los sensores del robot y sus valores
         """
-        sensors = {
-            "pos":self.pos,
-            "leftSpeed":self.leftSpeed,
-            "rightSpeed":self.rightSpeed,
-            "proximitySensorValues":self.proximitySensorValues,
-            "proximitySensorDistances":self.proximitySensorDistances,
-            "groundSensorValues":self.groundSensorValues,
-            #"angSpeed":self.angSpeed,
-            #"angle":self.angle,
-            #"collisionElasticity":self.collisionElasticity,
-            #"color":self.color,
-            #"dryFrictionCoefficient":self.dryFrictionCoefficient,
-            #"height":self.height,
-            #"interlacedDistance":self.interlacedDistance,
-            #"isCylindric":self.isCylindric,
-            #"leftEncoder":self.leftEncoder,
-            #"leftOdometry":self.leftOdometry,
-            #"mass":self.mass,
-            #"momentOfInertia":self.momentOfInertia,
-            #"radius":self.radius,
-            #"rightEncoder":self.rightEncoder,
-            #"rightOdometry":self.rightOdometry,
-            #"speed":self.speed,
-            #"viscousFrictionCoefficient":self.viscousFrictionCoefficient,
-            #"viscousMomentFrictionCoefficient":self.viscousMomentFrictionCoefficient
-        }
+        sensors = super().getSensors()
+        sensors["groundSensorValues"] = super().groundSensorValues
         return sensors
 
-    def setLedsIntensity( self, leds:list ):
+    def setLedsIntensity( self, leds:list ) -> dict:
         """
         Cambia la intensidad de los leds del robot
 
@@ -59,4 +36,5 @@ class RobotThymio2( RobotBase, Thymio2 ):
                   arreglo corresponde al led a operar
         """
         for idx in range( len(leds) ):
-            self.setLedIntensity( idx, leds[idx] )
+            super().setLedIntensity( idx, leds[idx] )
+        return {}

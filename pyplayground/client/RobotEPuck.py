@@ -42,8 +42,7 @@ class RobotEPuck( RobotBase.RobotBase ):
             La magen lineal
         """
         pkg = { "cmd":"getCameraImage" }
-        resp = self.sendPkg( pkg )
-        resp = bytearray( resp, "iso-8859-1" )
+        resp = self.sendPkg( pkg, bytes )
         l = len( resp )
         resp = [ tuple( resp[i:i+4] ) for i in range( 0, l, 4 ) ]
         return resp

@@ -68,7 +68,7 @@ class RobotBase():
         pkg = { "cmd":"getSensors" }
         resp = self.sendPkg( pkg )
         self.pos = tuple( resp["pos"] )
-        self.speed = ( resp["leftSpeed"], resp["rightSpeed"]  )
+        self.speed = tuple( resp["speed"]  )
         self.proximitySensorValues = tuple( resp["proximitySensorValues"] )
         self.proximitySensorDistances = tuple( resp["proximitySensorDistances"] )
         return resp
@@ -109,11 +109,16 @@ class RobotBase():
             raise
 
 
-    def sendPkg( self, pkg:dict ) -> object:
+    def sendPkg( self, pkg:dict, clase:type=dict ) -> object:
         self.sock.sendall( bytearray( json.dumps( pkg ) + "\n", "iso-8859-1" ) )
-        resp = self.readline()
-        return json.loads( resp )
-
+        if( clase is bytes ):
+            resp = self.readbytes()
+        elif( clase is dict ):
+            resp = self.readline()
+            resp = json.loads( resp )
+        else:
+            raise Exception( "Clase a recuperar es invalida" )
+        return resp
 
     def readline( self ) -> str:
         """
@@ -136,6 +141,22 @@ class RobotBase():
             self.buff[n] = ord( c )
             n += 1
         return self.buff[:n].decode( "iso-8859-1" )
+
+    def readbytes( self ) -> bytearray:
+        size = bytearray( 4 )
+        for i in range(4):
+            c = self.sock.recv(1)
+            if( c == b"" ): return bytes()  # la conexion fue cerrada remotamente
+            size[i] = ord(c)
+        size = int.from_bytes( size, byteorder="big" )
+
+        data = bytearray( size )
+        for i in range(size):
+            c = self.sock.recv(1)
+            if( c == b"" ): return bytes()  # la conexion fue cerrada remotamente
+            data[i] = ord(c)
+        return data
+
 
     def __str__( self ):
         return f"RobotControl >> name:{self.name} - host={self.host} - port={self.port}"

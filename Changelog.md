@@ -1,5 +1,14 @@
 # ChangeLog
 
+## v1.1.0 - 2021-05-24
+### Changed
+- Modifica Test_Help para no incluir RobotFactory
+- Simplifica Test_Led
+- Simplifica retorno de sensores
+- Cambia retorno None a dict en clases servidor (compatibel con JSON)
+- Modifica retorno de imagen de la camara del EPuck para enviar solo bytes (no JSON)
+- Simplifica invocacion del loop de pyenki
+
 ## v1.0.0 - 2021-05-23
 ### Changed
 - Modifica cliente de robots para incorporar atributos para sus sensores
