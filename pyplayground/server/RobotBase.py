@@ -32,7 +32,7 @@ class RobotBase():
         print( f"Playground >> Robot {self.name} ejecutando" )
         try:
             # informamos el tipo de robot que somos
-            conn.sendall( bytearray( self.tipo + "\n", "iso-8859-1" ) )
+            conn.sendall( bytes( self.tipo + "\n", "iso-8859-1" ) )
 
             # el lector e interprete de los comandos
             while( self.running ):
@@ -59,7 +59,7 @@ class RobotBase():
                     # enviamos la respuesta al cliente
                     if( isinstance( resp, dict ) ):
                         resp = json.dumps( resp ) + "\n"
-                        resp = bytearray( resp, "iso-8859-1" )
+                        resp = bytes( resp, "iso-8859-1" )
                     elif( not isinstance( resp, bytes ) ):
                         raise Exception( "Respuesta debe ser dict o bytes" )
                     conn.sendall( resp )

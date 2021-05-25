@@ -1,5 +1,15 @@
 # ChangeLog
 
+## v1.2.0 - 2021-05-25
+### Changed
+- Cambia bytearray a bytes
+- Convierte a Clases los Tests
+
+### Added
+- Agrega Test para los sensores de distancia
+- Agrega Cliente y pruebas en Java
+
+
 ## v1.1.0 - 2021-05-24
 ### Changed
 - Modifica Test_Help para no incluir RobotFactory
@@ -8,6 +18,7 @@
 - Cambia retorno None a dict en clases servidor (compatibel con JSON)
 - Modifica retorno de imagen de la camara del EPuck para enviar solo bytes (no JSON)
 - Simplifica invocacion del loop de pyenki
+
 
 ## v1.0.0 - 2021-05-23
 ### Changed

@@ -47,7 +47,7 @@ class RobotBase():
         """
         return self.name
 
-    def setSpeed( self, left:int, right:int ) -> None:
+    def setSpeed( self, left:int, right:int ):
         """
         Cambia la velocidad de las ruedas del robot
 
@@ -91,7 +91,7 @@ class RobotBase():
             self.sock.connect( ( host, port ) )
 
             # pedimos conexion al robot
-            self.sock.sendall( bytearray( name + "\n", "iso-8859-1" ) )
+            self.sock.sendall( bytes( name + "\n", "iso-8859-1" ) )
 
             # recibimos la respuesta del servidor
             tipo = self.readline()
@@ -110,7 +110,7 @@ class RobotBase():
 
 
     def sendPkg( self, pkg:dict, clase:type=dict ) -> object:
-        self.sock.sendall( bytearray( json.dumps( pkg ) + "\n", "iso-8859-1" ) )
+        self.sock.sendall( bytes( json.dumps( pkg ) + "\n", "iso-8859-1" ) )
         if( clase is bytes ):
             resp = self.readbytes()
         elif( clase is dict ):

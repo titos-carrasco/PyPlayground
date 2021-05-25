@@ -31,7 +31,7 @@ if( os.name == "nt" ):
 # Linux
 else:
     sys.path.append( f"{pkgpath}/server/linux" )
-#### Inicio del hack
+#### Fin del hack
 
 import pyenki
 from server.RobotFactory import RobotFactory

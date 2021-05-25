@@ -51,18 +51,17 @@ robot
         x, y  : coordenadas en donde se posicionará el centro de este elemento
 
         Robot thymio2:
-            t epuck  :
-                Sensores de Proximidad:
-                    0: frontal izquierdo izquiero
-                    1: frontal izquierdo
-                    2: frontal frontal
-                    3: frontal derecho
-                    4: frontal derecho derecho
-                    5: trasero izquierdo
-                    6: trasero derecho
-                Sensores de línea:
-                    0: izquierdo
-                    1: derecho
+            Sensores de Proximidad:
+                0: frontal izquierdo izquiero
+                1: frontal izquierdo
+                2: frontal frontal
+                3: frontal derecho
+                4: frontal derecho derecho
+                5: trasero izquierdo
+                6: trasero derecho
+            Sensores de línea:
+                0: izquierdo
+                1: derecho
 
         Robot epuck  :
             Sensores de Proximidad:

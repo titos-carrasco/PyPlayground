@@ -45,6 +45,6 @@ class RobotEPuck( RobotBase, EPuck ):
         Returns
             La magen lineal
         """
-        image = bytearray( [ int(v*255) for c in super().cameraImage for v in c.components] )
+        image = bytes( [ int(v*255) for c in super().cameraImage for v in c.components] )
         data = len(image).to_bytes( length=4, byteorder="big" ) + image
         return data
