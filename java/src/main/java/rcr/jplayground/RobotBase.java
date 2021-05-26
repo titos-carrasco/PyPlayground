@@ -36,7 +36,9 @@ public class RobotBase {
         in = new BufferedReader( new InputStreamReader( sock.getInputStream(), "iso-8859-1" ) );
 
         // solicitamos acceso enviando el nombre del robot
-        out.println( name );
+        out.print( name );
+        out.print( '\n' );
+        out.flush();
 
         // si es aceptado nos envia el tipo de robot
         String el_tipo = in.readLine();
@@ -81,7 +83,9 @@ public class RobotBase {
         json.put( "cmd", "setSpeed" );
         json.put( "leftSpeed", leftSpeed );
         json.put( "rightSpeed", rightSpeed );
-        out.println( json );
+        out.print( json );
+        out.print( '\n' );
+        out.flush();
 
         String resp = in.readLine();
     }
@@ -89,7 +93,9 @@ public class RobotBase {
     protected Map<String, Object> retrieveSensors() throws Exception {
         JSONObject json = new JSONObject();
         json.put( "cmd", "getSensors" );
-        out.println( json );
+        out.print( json );
+        out.print( '\n' );
+        out.flush();
 
         String resp = in.readLine();
 

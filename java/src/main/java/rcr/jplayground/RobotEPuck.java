@@ -16,7 +16,9 @@ public class RobotEPuck extends RobotBase {
         JSONObject json = new JSONObject();
         json.put( "cmd", "setLedRing" );
         json.put( "estado", on_off ? 1 : 0 );
-        out.println( json );
+        out.print( json );
+        out.print( '\n' );
+        out.flush();
 
         String resp = in.readLine();
     }
@@ -28,7 +30,9 @@ public class RobotEPuck extends RobotBase {
     public List<int[]> getCameraImage() throws Exception {
         JSONObject json = new JSONObject();
         json.put( "cmd", "getCameraImage" );
-        out.println( json );
+        out.print( json );
+        out.print( '\n' );
+        out.flush();
 
         int[] s = new int[4];
         for( int i = 0; i<4; i++ )

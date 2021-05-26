@@ -1,5 +1,13 @@
 # ChangeLog
 
+## v1.2.2 - 2021-05-26
+### Changed
+- Corrige cliente java para operar adecuadamente con fin de línea '\n' en Windows
+
+### Removed
+- Se eliminan los *.class de los commit
+
+
 ## v1.2.1 - 2021-05-26
 ### Changed
 - Incorpora llamada al manejador de eventos de pygame en test_Camera.py

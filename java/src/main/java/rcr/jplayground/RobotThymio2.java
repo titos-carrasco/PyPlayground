@@ -26,7 +26,9 @@ public class RobotThymio2 extends RobotBase {
         JSONObject json = new JSONObject();
         json.put( "cmd", "setLedsIntensity" );
         json.put( "leds", leds );
-        out.println( json );
+        out.print( json );
+        out.print( '\n' );
+        out.flush();
 
         String resp = in.readLine();
     }
