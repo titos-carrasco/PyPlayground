@@ -40,6 +40,9 @@ class TestCamera():
             # Loop clasico
             t = time.time()
             while( time.time() - t < 5 ):
+                # requerido por pygame
+                for e in pygame.event.get(): pass
+
                 # trazamos la imagen de la camara
                 for i in range( imglen ):
                     color = img[ i ]

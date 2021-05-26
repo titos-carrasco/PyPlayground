@@ -12,9 +12,14 @@ class RobotBase():
     """
 
     def __init__( self, name:str ):
-        super().__init__()
-        self.name = name
+        self.me = None
         self.lock = threading.Lock()
+        self.enkilock = threading.Lock()
+        self.myName = name
+        self.myPos = ( 0, 0 )
+        self.mySpeed = ( 0, 0 )
+        self.myProximitySensorValues = [0]*10
+        self.myProximitySensorDistances = [0]*10
 
     def run( self, conn:socket.socket ):
         """
@@ -27,9 +32,13 @@ class RobotBase():
         # verifiquemos que no este en ejecucion este robot
         if( not self.lock.acquire( blocking=False ) ): return
 
+        # mis datos como thread
+        self.me = threading.current_thread()
+        self.me.name = self.me.name + "/" + self.myName
+
         # aceptamos
         self.running = True
-        print( f"Playground >> Robot {self.name} ejecutando" )
+        print( f"Playground >> Robot {self.myName} ejecutando" )
         try:
             # informamos el tipo de robot que somos
             conn.sendall( bytes( self.tipo + "\n", "iso-8859-1" ) )
@@ -73,7 +82,7 @@ class RobotBase():
             pass
 
         # eso es todo
-        print( f"Playground >> Robot {self.name} finalizado" )
+        print( f"Playground >> Robot {self.myName} finalizado" )
         self.lock.release()
 
     def finish( self ):
@@ -84,19 +93,7 @@ class RobotBase():
         while( self.lock.locked() ):
             # cambiamos su variable de control
             self.running = False
-            time.sleep( 0.0001 )
-
-    def setSpeed( self, leftSpeed:int, rightSpeed:int ) -> dict:
-        """
-        Cambia la velocidad de las ruedas del robot
-
-        Parameters
-            leftSpeed : valor para la rueda izquierda
-            rightSpeed: valor para la rueda derecha
-        """
-        self.leftSpeed = leftSpeed
-        self.rightSpeed = rightSpeed
-        return {}
+            time.sleep( 0.0100 )
 
     def getSensors( self ) -> dict:
         """
@@ -105,24 +102,46 @@ class RobotBase():
         Return
             Los sensores del robot y sus valores
         """
+        self.enkilock.acquire()
         sensors = {
-            "pos": self.pos,
-            "speed": ( self.leftSpeed, self.rightSpeed ),
-            "proximitySensorValues": self.proximitySensorValues,
-            "proximitySensorDistances": self.proximitySensorDistances
+            "pos": self.myPos,
+            "speed": self.mySpeed,
+            "proximitySensorValues": self.myProximitySensorValues,
+            "proximitySensorDistances": self.myProximitySensorDistances
         }
+        self.enkilock.release()
         return sensors
 
-    def controlStep( self, dt:float ):
+    def setSpeed( self, leftSpeed:float, rightSpeed:float ) -> dict:
         """
-        Invocada desde la libreria "pyenki" para cada robot
-
-        Este metodo es interno a la clase
+        Cambia la velocidad de las ruedas del robot
 
         Parameters
-            dt: ???
+            leftSpeed : valor para la rueda izquierda
+            rightSpeed: valor para la rueda derecha
         """
-        pass
+        self.enkilock.acquire()
+        self.mySpeed = ( leftSpeed, rightSpeed )
+        self.enkilock.release()
+        return {}
+
+    def setLedRing( self, on_off:int ) -> dict:
+        return {}
+
+    def setLedsIntensity( self, leds:list ) -> dict:
+        return {}
+
+    def getCameraImage( self ) -> bytes:
+        return int(0).to_bytes( length=4, byteorder="big" )
+
+    def myControlStep( self, dt:float ):
+        """Invocada por cada robot"""
+        self.enkilock.acquire()
+        self.leftSpeed, self.rightSpeed = self.mySpeed
+        self.myPos = self.pos
+        self.myProximitySensorValues = self.proximitySensorValues
+        self.myProximitySensorDistances = self.proximitySensorDistances
+        self.enkilock.release()
 
     def readline( conn:socket.socket ) -> str:
         """

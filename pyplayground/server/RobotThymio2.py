@@ -12,8 +12,11 @@ class RobotThymio2( RobotBase, Thymio2 ):
     tipo = "thymio2"
 
     def __init__( self, name:str ):
-        super().__init__( name )
+        RobotBase.__init__( self, name )
+        Thymio2.__init__( self )
 
+        self.myLeds= [0]*23
+        self.myGroundSensorValues = [0]*2
 
     def getSensors( self ) -> dict:
         """
@@ -23,7 +26,9 @@ class RobotThymio2( RobotBase, Thymio2 ):
             Los sensores del robot y sus valores
         """
         sensors = super().getSensors()
-        sensors["groundSensorValues"] = super().groundSensorValues
+        self.enkilock.acquire()
+        sensors["groundSensorValues"] = self.myGroundSensorValues
+        self.enkilock.release()
         return sensors
 
     def setLedsIntensity( self, leds:list ) -> dict:
@@ -35,6 +40,16 @@ class RobotThymio2( RobotBase, Thymio2 ):
                   asignar como intensidad a cada led. El indice del
                   arreglo corresponde al led a operar
         """
-        for idx in range( len(leds) ):
-            super().setLedIntensity( idx, leds[idx] )
+        self.enkilock.acquire()
+        self.myLeds = leds
+        self.enkilock.release()
         return {}
+
+    def controlStep( self, dt:float ):
+        """Invocada desde la libreria "pyenki" para cada robot"""
+        self.myControlStep( dt )
+        self.enkilock.acquire()
+        self.myGroundSensorValues = super().groundSensorValues
+        for idx in range( len( self.myLeds ) ):
+            self.setLedIntensity( idx, self.myLeds[idx] )
+        self.enkilock.release()

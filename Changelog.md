@@ -1,5 +1,11 @@
 # ChangeLog
 
+## v1.2.1 - 2021-05-26
+### Changed
+- Incorpora llamada al manejador de eventos de pygame en test_Camera.py
+- Toda la operación de métodos y variables de los robots se lleva al hilo GUI - controlStep()
+
+
 ## v1.2.0 - 2021-05-25
 ### Changed
 - Cambia bytearray a bytes

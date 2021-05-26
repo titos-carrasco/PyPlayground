@@ -15,17 +15,10 @@ class RobotEPuck( RobotBase, EPuck ):
         Parameters
           name: Nombre para el robot
         """
-        super().__init__( name )
-
-    def getSensors( self ) -> dict:
-        """
-        Obtiene el valor de los sensores del robot
-
-        Return
-            Los sensores del robot y sus valores
-        """
-        sensors = super().getSensors()
-        return sensors
+        RobotBase.__init__( self, name )
+        EPuck.__init__( self )
+        self.myLedRing = 0
+        self.myCameraImage = None
 
     def setLedRing( self, on_off:int ) -> dict:
         """
@@ -34,7 +27,9 @@ class RobotEPuck( RobotBase, EPuck ):
         Parameters
           on_off: 1 para encender, 0 para apagar
         """
-        super().setLedRing( on_off )
+        self.enkilock.acquire()
+        self.myLedRing = on_off
+        self.enkilock.release()
         return {}
 
     def getCameraImage( self ) -> bytes:
@@ -45,6 +40,18 @@ class RobotEPuck( RobotBase, EPuck ):
         Returns
             La magen lineal
         """
-        image = bytes( [ int(v*255) for c in super().cameraImage for v in c.components] )
+        self.enkilock.acquire()
+        image = self.myCameraImage
+        self.enkilock.release()
+
+        image = bytes( [ int(v*255) for c in image for v in c.components] )
         data = len(image).to_bytes( length=4, byteorder="big" ) + image
         return data
+
+    def controlStep( self, dt:float ):
+        """Invocada desde la libreria "pyenki" para cada robot"""
+        self.myControlStep( dt )
+        self.enkilock.acquire()
+        self.myCameraImage = self.cameraImage
+        EPuck.setLedRing( self, self.myLedRing )
+        self.enkilock.release()
