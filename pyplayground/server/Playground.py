@@ -13,28 +13,8 @@ import time
 import json
 import math
 
-#### Inicio del hack
-# Not the best way
-pkgpath = os.path.dirname( os.path.abspath( f"{__file__}" ) )
-if( pkgpath in sys.path ):
-    sys.path.remove( pkgpath )
-pkgpath = os.path.dirname( os.path.abspath( f"{__file__}/.." ) )
-sys.path.insert( 0, pkgpath )
-
-# Windows
-if( os.name == "nt" ):
-    cwd = os.getcwd()
-    os.add_dll_directory( f"{pkgpath}\\server\\windows\\dll" )
-    os.environ["QT_PLUGIN_PATH"] =  f"{pkgpath}\\server\\windows\\qt"
-    os.environ["QT_OPENGL"] = "desktop"
-    sys.path.append( f"{pkgpath}/server/windows" )
-# Linux
-else:
-    sys.path.append( f"{pkgpath}/server/linux" )
-#### Fin del hack
-
-import pyenki
-from server.RobotFactory import RobotFactory
+from pyplayground.server import pyenki
+from pyplayground.server.RobotFactory import RobotFactory
 
 class Playground():
     """
@@ -44,6 +24,8 @@ class Playground():
         world_def: nombre del archivo con la descripcion del playground
                    a construir (debe estar en formato JSON)
     """
+
+
     def __init__( self, world_def  ):
         self.host = None
         self.port = None
@@ -195,7 +177,17 @@ class Playground():
 
 #--- show time
 if( __name__ == "__main__" ):
-    if( len( sys.argv ) == 2 ):
+    mypath = os.path.dirname( os.path.abspath( f"{__file__}" ) )
+
+    # Windows/QT
+    if( os.name == "nt" ):
+        if( not "QT_PLUGIN_PATH" in os.environ ):
+            os.environ["QT_PLUGIN_PATH"] =  f"{mypath}\\winqt"
+        #os.environ["QT_OPENGL"] = "desktop"
+
+    if( len( sys.argv ) == 1 ):
+        Playground( f"{mypath}/example.world" ).run()
+    elif( len( sys.argv ) == 2 ):
         Playground( sys.argv[1] ).run()
     else:
-        Playground( "example.world" ).run()
+        pass

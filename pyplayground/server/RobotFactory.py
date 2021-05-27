@@ -1,8 +1,8 @@
 import socket
 import time
 
-from server.RobotThymio2 import RobotThymio2
-from server.RobotEPuck import RobotEPuck
+from pyplayground.server.RobotThymio2 import RobotThymio2
+from pyplayground.server.RobotEPuck import RobotEPuck
 
 class RobotFactory():
     """

@@ -1,5 +1,5 @@
-from pyenki import Thymio2
-from server.RobotBase import RobotBase
+from pyplayground.server.pyenki import Thymio2
+from pyplayground.server.RobotBase import RobotBase
 
 class RobotThymio2( RobotBase, Thymio2 ):
     """

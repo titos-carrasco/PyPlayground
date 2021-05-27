@@ -1,5 +1,5 @@
-from pyenki import EPuck
-from server.RobotBase import RobotBase
+from pyplayground.server.pyenki import EPuck
+from pyplayground.server.RobotBase import RobotBase
 
 class RobotEPuck( RobotBase, EPuck ):
     """
