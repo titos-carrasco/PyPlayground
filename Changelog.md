@@ -2,7 +2,28 @@
 
 ## [Unreleased]
 ### Changed
+- modifica nombre de plataforma para verlo reflejado en el archivo whl
+
+### Added
+- Se agregan los archivos whl versión v1.2.3
+
+### Removed
+- Se eliminan los archivos whl versión v1.2.2
+
+## v1.2.3 - 2021-05-27
+### Changed
 - Corrige declaración de clases internas en cliente Java
+- Reorganización de código para generar paquetes Wheel de python
+  - cliente java se mueve a java_client
+  - todos los test se mueven a test/python y test/java
+  - el directorio worlds se lleva a test/worlds
+  - corrige imports en server/*.py
+  - se mueven las dll, pyd y so a la raíz de server/
+  - dll de qi para windows se llevan a server/winqt
+
+### Added
+- Agrega setup.py para generar los wheels y facilitar la instalacion en los clientes
+- Se generar los wheels en dist/ para instalación directa con pip
 
 
 ## v1.2.2 - 2021-05-26

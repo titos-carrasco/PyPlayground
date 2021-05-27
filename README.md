@@ -16,13 +16,12 @@ Playground in Python3.9x using [ENKI Robot Simulator](https://github.com/enki-co
 
 
 ## Install
-### Windows
 
-> pip install https://github.com/titos-carrasco/pyplayground/dist/pyplayground-1.2.2-py3-none-windows.whl
+Download from dist/ and execute
 
-### Linux
-> pip install https://github.com/titos-carrasco/pyplayground/dist/pyplayground-1.2.2-py3-none-linux.whl
+> C:\> pip install _pyplayground-X.Y.X-py3-none-win_amd64.whl_
 
+> $ pip install _pyplayground-X.Y.Z-py3-none-linux_x86_64.whl_
 
 ### Minimal Test
 > $ python -m pyplayground.server.Playground

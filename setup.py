@@ -1,9 +1,11 @@
+# {dist}-{version}(-{build})?-{python}-{abi}-{platform}.whl
+
 from setuptools import setup
 import sys
 
 SETUP = {
     "name"             : "pyplayground",
-    "version"          : "1.2.2",
+    "version"          : "1.2.3",
     "description"      : "Controlling robots in the ENKI Robot Simulator",
     "license"          : "MIT",
     "author"           : "Roberto Carrasco",
@@ -21,7 +23,7 @@ SETUP = {
 
 if( "--windows" in sys.argv ):
     sys.argv.remove( "--windows" )
-    SETUP["name"] += "_windows"
+    sys.argv.append( "--plat-name=win_amd64" )
     data_files = [
                     "pyenki.pyd",
                     "*.dll",
@@ -34,8 +36,9 @@ if( "--windows" in sys.argv ):
     SETUP["package_data"]["pyplayground.server"] += data_files
 
 elif( "--linux" in sys.argv ):
+    #manylinux1     x86-64
     sys.argv.remove( "--linux" )
-    SETUP["name"] += "_linux"
+    sys.argv.append( "--plat-name=linux-x86_64" )
     data_files = [
                     "pyenki.so"
                  ]
