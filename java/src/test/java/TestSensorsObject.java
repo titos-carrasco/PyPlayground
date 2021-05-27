@@ -67,44 +67,45 @@ public class TestSensorsObject {
         test.run();
     }
 
-}
 
-class MyThymio2 extends RobotThymio2 {
-    private int s = 10;
+    class MyThymio2 extends RobotThymio2 {
+        private int s = 10;
 
-    public MyThymio2( String name, String host, int port ) throws Exception {
-        super( name, host, port );
-        setSpeed( s, s );
-    }
-
-    public float checkObstacle() throws Exception {
-        getSensors();
-        float distancia = getProximitySensorDistances()[2];
-        if( distancia < 8 )
-            setSpeed( -s*10, s );
-        else
+        public MyThymio2( String name, String host, int port ) throws Exception {
+            super( name, host, port );
             setSpeed( s, s );
-        return distancia;
+        }
+
+        public float checkObstacle() throws Exception {
+            getSensors();
+            float distancia = getProximitySensorDistances()[2];
+            if( distancia < 8 )
+                setSpeed( -s*10, s );
+            else
+                setSpeed( s, s );
+            return distancia;
+        }
+
     }
 
-}
+    class MyEPuck extends RobotEPuck {
+        private int s = 20;
 
-class MyEPuck extends RobotEPuck {
-    private int s = 20;
-
-    public MyEPuck( String name, String host, int port ) throws Exception {
-        super( name, host, port );
-        setSpeed( s, s );
-    }
-
-    public float checkObstacle() throws Exception {
-        getSensors();
-        float distancia = getProximitySensorDistances()[0];
-        if( distancia < 8 )
-            setSpeed( -s*10, s );
-        else
+        public MyEPuck( String name, String host, int port ) throws Exception {
+            super( name, host, port );
             setSpeed( s, s );
-        return distancia;
+        }
+
+        public float checkObstacle() throws Exception {
+            getSensors();
+            float distancia = getProximitySensorDistances()[0];
+            if( distancia < 8 )
+                setSpeed( -s*10, s );
+            else
+                setSpeed( s, s );
+            return distancia;
+        }
+
     }
 
 }

@@ -68,92 +68,92 @@ public class TestSensorsThread {
         test.run();
     }
 
-}
+    class MyThymio2 extends RobotThymio2 implements Runnable {
+        private int s = 20;
+        private Thread me = null;
+        private boolean quit = false;
+        private Object sync = new Object();
 
-class MyThymio2 extends RobotThymio2 implements Runnable {
-    private int s = 20;
-    private Thread me = null;
-    private boolean quit = false;
-    private Object sync = new Object();
+        public MyThymio2( String name, String host, int port ) throws Exception {
+            super( name, host, port );
+        }
 
-    public MyThymio2( String name, String host, int port ) throws Exception {
-        super( name, host, port );
-    }
-
-    public void run() {
-        me = Thread.currentThread();
-        try {
-            setSpeed( s, s );
-            while( true ) {
-                getSensors();
-                float distancia = getProximitySensorDistances()[2];
-                if( distancia < 3 ) {
-                    setSpeed( -s*10, s );
-                    Thread.sleep( 1000 );
-                    setSpeed( s, s );
+        public void run() {
+            me = Thread.currentThread();
+            try {
+                setSpeed( s, s );
+                while( true ) {
+                    getSensors();
+                    float distancia = getProximitySensorDistances()[2];
+                    if( distancia < 3 ) {
+                        setSpeed( -s*10, s );
+                        Thread.sleep( 1000 );
+                        setSpeed( s, s );
+                    }
+                    boolean abort;
+                    synchronized( sync ) { abort = quit; }
+                    if( abort ) break;
                 }
-                boolean abort;
-                synchronized( sync ) { abort = quit; }
-                if( abort ) break;
             }
+            catch( Exception e ){}
+
+            try {
+                setSpeed( 0, 0 );
+                close();
+            }
+            catch( Exception e ){}
         }
-        catch( Exception e ){}
 
-        try {
-            setSpeed( 0, 0 );
-            close();
+        public void finish() throws Exception {
+            synchronized( sync ) { quit = true; }
+            me.join();
         }
-        catch( Exception e ){}
+
     }
 
-    public void finish() throws Exception {
-        synchronized( sync ) { quit = true; }
-        me.join();
-    }
 
-}
+    class MyEPuck extends RobotEPuck implements Runnable{
+        private int s = 10;
+        private Thread me = null;
+        private boolean quit = false;
+        private Object sync = new Object();
 
+        public MyEPuck( String name, String host, int port ) throws Exception {
+            super( name, host, port );
+        }
 
-class MyEPuck extends RobotEPuck implements Runnable{
-    private int s = 10;
-    private Thread me = null;
-    private boolean quit = false;
-    private Object sync = new Object();
-
-    public MyEPuck( String name, String host, int port ) throws Exception {
-        super( name, host, port );
-    }
-
-    public void run() {
-        me = Thread.currentThread();
-        try {
-            setSpeed( s, s );
-            while( true ) {
-                getSensors();
-                float distanciaR = getProximitySensorDistances()[0];
-                float distanciaL = getProximitySensorDistances()[7];
-                if( distanciaL < 4 || distanciaR < 4 ) {
-                    setSpeed( -s*10, s );
-                    Thread.sleep( 1000 );
-                    setSpeed( s, s );
+        public void run() {
+            me = Thread.currentThread();
+            try {
+                setSpeed( s, s );
+                while( true ) {
+                    getSensors();
+                    float distanciaR = getProximitySensorDistances()[0];
+                    float distanciaL = getProximitySensorDistances()[7];
+                    if( distanciaL < 4 || distanciaR < 4 ) {
+                        setSpeed( -s*10, s );
+                        Thread.sleep( 1000 );
+                        setSpeed( s, s );
+                    }
+                    boolean abort;
+                    synchronized( sync ) { abort = quit; }
+                    if( abort ) break;
                 }
-                boolean abort;
-                synchronized( sync ) { abort = quit; }
-                if( abort ) break;
             }
-        }
-        catch( Exception e ){}
+            catch( Exception e ){}
 
-        try {
-            setSpeed( 0, 0 );
-            close();
+            try {
+                setSpeed( 0, 0 );
+                close();
+            }
+            catch( Exception e ){}
         }
-        catch( Exception e ){}
-    }
 
-    public void finish() throws Exception {
-        synchronized( sync ) { quit = true; }
-        me.join();
+        public void finish() throws Exception {
+            synchronized( sync ) { quit = true; }
+            me.join();
+        }
+
     }
 
 }

@@ -1,5 +1,10 @@
 # ChangeLog
 
+## [Unreleased]
+### Changed
+- Corrige declaración de clases internas en cliente Java
+
+
 ## v1.2.2 - 2021-05-26
 ### Changed
 - Corrige cliente java para operar adecuadamente con fin de línea '\n' en Windows
