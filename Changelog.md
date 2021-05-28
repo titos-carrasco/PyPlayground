@@ -1,6 +1,17 @@
 # ChangeLog
 
-## [Unreleased]
+## [Unreleased] - 2021-05-27
+### Changed
+- Incorpora parámetro "angle" a la definición del robot en el mundo (su orientación)
+
+### Added
+- Agrega Demo de seguimiento de línea
+
+### Removed
+- Elimina los archivos wheel de los commits
+
+
+## @0973b13 - 2021-05-27
 ### Changed
 - modifica nombre de plataforma para verlo reflejado en el archivo whl
 
@@ -31,7 +42,7 @@
 - Corrige cliente java para operar adecuadamente con fin de línea '\n' en Windows
 
 ### Removed
-- Se eliminan los *.class de los commit
+- Se eliminan los .class de los commit
 
 
 ## v1.2.1 - 2021-05-26

@@ -134,6 +134,7 @@ class Playground():
                 rob = RobotFactory.make( tipo, name )
                 if( rob is None ): raise Exception( f"Robot {name} no se encuentra definido" )
                 rob.pos = ( elem["x"], elem["y"] )
+                if( "angle" in elem ): rob.angle = int( elem["angle" ] )*(math.pi/180.0)
                 self.world.addObject( rob )
                 self.robots[name] = rob
 
