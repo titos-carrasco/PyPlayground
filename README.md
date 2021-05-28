@@ -15,9 +15,13 @@ Playground in Python3.9x using [ENKI Robot Simulator](https://github.com/enki-co
     + Windows 10, Python 3.9.0, Qt5.12.10, Boost 1.76.0
 
 
-## Install
+## Build Wheel (developers)
+> $ python setup.py --windows bdist_wheel
 
-Download from dist/ and execute
+> $ python setup.py --linux bdist_wheel
+
+
+## Install
 
 > C:\> pip install _pyplayground-X.Y.X-py3-none-win_amd64.whl_
 
@@ -27,7 +31,3 @@ Download from dist/ and execute
 > $ python -m pyplayground.server.Playground
 
 
-## Build Wheel (developers)
-> $ python setup.py --windows bdist_wheel
-
-> $ python setup.py --linux bdist_wheel

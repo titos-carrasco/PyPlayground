@@ -1,14 +1,18 @@
 # ChangeLog
 
-## [Unreleased] - 2021-05-27
+## v1.2.4 - 2021-05-28
 ### Changed
 - Incorpora parámetro "angle" a la definición del robot en el mundo (su orientación)
+
+### Fixed
+- Corrige "segmentation fault" en librería pyenki
 
 ### Added
 - Agrega Demo de seguimiento de línea
 
 ### Removed
 - Elimina los archivos wheel de los commits
+- Elimina los archivos jar y class de los commits
 
 
 ## @0973b13 - 2021-05-27
