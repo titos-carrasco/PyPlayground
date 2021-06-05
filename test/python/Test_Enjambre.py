@@ -12,7 +12,7 @@ class TestEnjambre():
     def run( self ):
         # Levantamos el playground en otro procesos
         try:
-            pg = subprocess.Popen( [ "python", "-m", "pyplayground.server.Playground", "../worlds/enjambre.world" ], shell=False )
+            #pg = subprocess.Popen( [ "python", "-m", "pyplayground.server.Playground", "../worlds/enjambre.world" ], shell=False )
             time.sleep( 1 )
         except Exception as e:
             print( e )
@@ -37,15 +37,17 @@ class TestEnjambre():
                 for r in robots:
                     r.setSpeed( random.uniform( -1000,1000 ), random.uniform( -1000,1000 ) )
                 time.sleep( 2 )
-            for r in robots: r.close()
+            for r in robots:
+                r.setSpeed( 0, 0 )
+                r.close()
         except ConnectionResetError:
             print( "Conexion abortada" )
         except Exception as e:
             print( e )
 
         # Detenemos el playground
-        time.sleep( 5 )
-        pg.send_signal( subprocess.signal.SIGTERM )
+        #time.sleep( 5 )
+        #pg.send_signal( subprocess.signal.SIGTERM )
 
 
 # show time

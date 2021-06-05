@@ -12,7 +12,7 @@ class TestSumo():
     def run( self ):
         # Levantamos el playground en otro proceso
         try:
-            pg = subprocess.Popen( [ "python", "-m", "pyplayground.server.Playground", "../worlds/sumo.world" ], shell=False )
+            #pg = subprocess.Popen( [ "python", "-m", "pyplayground.server.Playground", "../worlds/sumo.world" ], shell=False )
             time.sleep( 1 )
         except Exception as e:
             print( e )
@@ -57,7 +57,7 @@ class TestSumo():
             print( e )
 
         # Detenemos el playground
-        pg.send_signal( subprocess.signal.SIGTERM )
+        #pg.send_signal( subprocess.signal.SIGTERM )
 
 # show time
 TestSumo().run()

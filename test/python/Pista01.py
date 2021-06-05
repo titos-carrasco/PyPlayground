@@ -11,7 +11,7 @@ class Pista01():
     def run( self ):
         # levantamos el playground en otro proceso
         try:
-            pg = subprocess.Popen( [ "python", "-m", "pyplayground.server.Playground", "../worlds/Pista01.world" ], shell=False )
+            #pg = subprocess.Popen( [ "python", "-m", "pyplayground.server.Playground", "../worlds/Pista01.world" ], shell=False )
             time.sleep( 1 )
         except Exception as e:
             print( e )
@@ -31,7 +31,7 @@ class Pista01():
 
         # loop clasico
         t = time.time()
-        while( time.time() - t < 20000 ):
+        while( time.time() - t < 10 ):
             time.sleep( 0.0001 )
 
         # detenemos los robots
@@ -39,7 +39,7 @@ class Pista01():
         thymio02.finish()
 
         # detenemos el playground
-        pg.send_signal( subprocess.signal.SIGTERM )
+        #pg.send_signal( subprocess.signal.SIGTERM )
 
 
 class Thymio01( RobotThymio2 ):

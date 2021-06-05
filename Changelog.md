@@ -1,5 +1,13 @@
 # ChangeLog
 
+## v1.2.5 - 2021-06-05
+### Fixed
+- Corrige ajuste de parámetro en RobotEpuck (setLedRing) cliente
+
+### Changed
+- Modifica tests para poder evaluar la versión en C++ del servidor
+
+
 ## v1.2.4 - 2021-05-28
 ### Changed
 - Incorpora parámetro "angle" a la definición del robot en el mundo (su orientación)

@@ -38,7 +38,7 @@ class TestSensorsSimple():
     def run( self ):
         # levantamos el playground en otro proceso
         try:
-            pg = subprocess.Popen( [ "python", "-m", "pyplayground.server.Playground", "../worlds/simple.world" ], shell=False )
+            #pg = subprocess.Popen( [ "python", "-m", "pyplayground.server.Playground", "../worlds/simple.world" ], shell=False )
             time.sleep( 1 )
         except Exception as e:
             print( e )
@@ -81,13 +81,15 @@ class TestSensorsSimple():
 
                 time.sleep( 1 )
 
+            thymio.setSpeed( 0, 0 )
+            epuck.setSpeed( 0, 0 )
         except ConnectionResetError:
             print( "Conexion abortada" )
         except Exception as e:
             print( e )
 
         # detenemos el playground
-        pg.send_signal( subprocess.signal.SIGTERM )
+        #pg.send_signal( subprocess.signal.SIGTERM )
 
 
 # show time

@@ -13,7 +13,7 @@ class TestCamera():
     def run( self ):
         # Levantamos el playground en otro procesos
         try:
-            pg = subprocess.Popen( [ "python", "-m", "pyplayground.server.Playground", "../worlds/epuck.world" ], shell=False )
+            #pg = subprocess.Popen( [ "python", "-m", "pyplayground.server.Playground", "../worlds/epuck.world" ], shell=False )
             time.sleep( 1 )
         except Exception as e:
             print( e )
@@ -27,7 +27,7 @@ class TestCamera():
         try:
             # Accesamos el robot y configuramos algunos de sus atributos
             epuck  = RobotEPuck( "Epuck-01" , host, port )
-            epuck.setLedRing( True )
+            epuck.setLedRing( 1 )
             epuck.setSpeed( -5, 5 )
 
             # Obtenemos la primera imagen
@@ -61,7 +61,7 @@ class TestCamera():
             print( e )
 
         # Detenemos el playground
-        pg.send_signal( subprocess.signal.SIGTERM )
+        #pg.send_signal( subprocess.signal.SIGTERM )
 
 
 # show time

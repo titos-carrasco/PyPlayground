@@ -30,7 +30,7 @@ class RobotEPuck( RobotBase.RobotBase ):
           on_off: True para encender, False para apagar
         """
         led_on = 1 if on_off else 0
-        pkg = { "cmd":"setLedRing", "estado": on_off }
+        pkg = { "cmd":"setLedRing", "estado": led_on }
         resp = self.sendPkg( pkg )
 
     def getCameraImage( self ) -> list :

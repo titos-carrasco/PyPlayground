@@ -13,7 +13,7 @@ class TestServerClient():
     def run( self ):
         # levantamos el playground en otro proceso
         try:
-            pg = subprocess.Popen( [ "python", "-m", "pyplayground.server.Playground", "../worlds/simple.world" ], shell=False )
+            #pg = subprocess.Popen( [ "python", "-m", "pyplayground.server.Playground", "../worlds/simple.world" ], shell=False )
             time.sleep( 1 )
         except Exception as e:
             print( e )
@@ -52,7 +52,7 @@ class TestServerClient():
             print( e )
 
         # detenemos el playground
-        pg.send_signal( subprocess.signal.SIGTERM )
+        #pg.send_signal( subprocess.signal.SIGTERM )
 
 
 # show time
