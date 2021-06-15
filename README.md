@@ -1,5 +1,9 @@
 # pyPlayground
 
+Moved to [Robot World](https://github.com/titos-carrasco/robworld)
+
+---
+
 Playground in Python3.9x using [ENKI Robot Simulator](https://github.com/enki-community/enki)
 
 ![](images/img-01.png "") ![](images/img-02.png "") ![](images/img-03.png "")
@@ -23,9 +27,9 @@ Playground in Python3.9x using [ENKI Robot Simulator](https://github.com/enki-co
 
 ## Install
 
-> C:\> pip install _pyplayground-X.Y.X-py3-none-win_amd64.whl_
+> C:\> pip install pyplayground-X.Y.X-py3-none-win_amd64.whl_
 
-> $ pip install _pyplayground-X.Y.Z-py3-none-linux_x86_64.whl_
+> $ pip install pyplayground-X.Y.Z-py3-none-linux_x86_64.whl_
 
 ### Minimal Test
 > $ python -m pyplayground.server.Playground

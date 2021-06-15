@@ -5,7 +5,7 @@ import sys
 
 SETUP = {
     "name"             : "pyplayground",
-    "version"          : "1.2.3",
+    "version"          : "1.2.5",
     "description"      : "Controlling robots in the ENKI Robot Simulator",
     "license"          : "MIT",
     "author"           : "Roberto Carrasco",
